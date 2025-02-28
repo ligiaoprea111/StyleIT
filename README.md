@@ -1,0 +1,2 @@
+# StyleIT
+Aplicatie de licenta
