@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import userRouter from "./routers/user-router.mjs";  // Asigură-te că ai importat corect router-ul
+import userRouter from "./routers/user-router.mjs";  //rutele pentru utilizatori
+import authRouter from "./routers/auth-router.mjs";  // Rutele pentru autentificare
 
 console.log("User router loaded:", userRouter); // Verifică dacă router-ul este importat corect
 
@@ -13,7 +14,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/users", userRouter);  // Folosește router-ul pentru /api/users
+app.use("/api/users", userRouter);  // Rutele pentru utilizatori
+app.use("/api/auth", authRouter);  // Rutele pentru autentificare
 
 app.get("/", (req, res) => {
   res.send("Serverul rulează!");
