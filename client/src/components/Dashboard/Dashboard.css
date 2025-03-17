@@ -1,0 +1,93 @@
+/* Bara de sus */
+.header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    background-color: #6a4c9c; /* Lila */
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  /* Containerul pentru logo și mesajul de bun venit */
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  /*.logo {
+    width: 50px; /* Mărimea logo-ului */
+   /* height: 50px; /* Mărimea logo-ului */
+   /* margin-right: 20px; /* Spațiu între logo și mesaj */
+ /* }*/
+
+ .logo {
+    width: 100px; /* Ajustează dimensiunea pentru logo */
+    height: auto; /* Păstrează proporțiile logo-ului */
+    object-fit: contain; /* Asigură-te că logo-ul este scalat corect */
+  }
+  
+
+  .welcome-message {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  /* Meniul lateral */
+  .sidebar {
+    width: 20%;
+    float: left;
+    padding: 10px;
+  }
+  
+  .icon-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  .icon {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  
+  /* Secțiunea meteo */
+  .weather {
+    width: 60%;
+    float: left;
+    padding: 20px;
+    background-color: #fff;
+    margin-top: 20px;
+    border-radius: 10px;
+  }
+  
+  /* Secțiunea articole */
+  .fashion-articles {
+    width: 60%;
+    float: left;
+    padding: 20px;
+    background-color: #fff;
+    margin-top: 20px;
+    border-radius: 10px;
+  }
+  
+  .fashion-articles ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .fashion-articles li {
+    margin-bottom: 10px;
+  }
+  
+  .fashion-articles a {
+    color: #6a4c9c;
+    text-decoration: none;
+  }
+  
+  .fashion-articles a:hover {
+    text-decoration: underline;
+  }
+  
