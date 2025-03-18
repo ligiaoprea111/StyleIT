@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./components/HomePage/HomePage"; // Importă pagina HomePage
 import LoginPage from "./components/LoginPage/LoginPage"; // Importă LoginPage
 import Dashboard from "./components/Dashboard/Dashboard"; // Pagină de dashboard
 
@@ -8,7 +9,7 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route path="/" element={<LoginPage />} /> {/* Ruta pentru pagina de login */}
+          <Route path="/" element={<HomePage />} /> {/* Ruta pentru pagina home */}
           <Route path="/login" element={<LoginPage />} /> {/* Corectat ruta pentru login */}
           <Route path="/dashboard" element={<Dashboard />} /> {/* Adaugă dashboard-ul */}
           {/* Alte rute */}

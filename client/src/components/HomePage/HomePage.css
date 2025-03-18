@@ -1,0 +1,46 @@
+.homepage-container {
+    width: 100%;
+    height: 100vh;  /* Înălțimea paginii să ocupe tot ecranul */
+    margin: 0;
+    position: relative;
+  }
+  
+  .background-image {
+    background-image: url('../../assets/images/cover_styleIT.jpg'); /* Adaugă calea corectă a imaginii tale */
+    background-size: cover;
+    background-position: center top;  
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column; /* Asta va aranja butoanele pe verticală */
+    justify-content: center;
+    align-items: center; /* Centrează butoanele pe orizontală */
+    gap: 20px; /* Adaugă un spațiu între butoane */
+    margin-left: 45px; /* Adaugă margine la stânga pentru a le muta spre dreapta */
+    margin-top: 90px;
+  }  
+  
+  button {
+    all: unset;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #1b1731 !important;  /* Poți schimba culoarea */
+    color: white !important;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #7b5fff !important;  /* Culoare schimbată la hover */
+  }
+  
