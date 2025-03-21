@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import './LoginForm.css'; // Importă stilurile pentru formularul de login
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = ({ closeModal }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate=useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +20,7 @@ const LoginForm = ({ closeModal }) => {
       // Salvează token-ul și redirecționează utilizatorul (pentru exemplu, nu folosim aici navigare, o putem adăuga mai târziu)
       localStorage.setItem("token", response.data.token);
       closeModal(); // Închide modalul după ce utilizatorul s-a autentificat
+      navigate("/dashboard"); // Redirecționează utilizatorul la dashboard
     } catch (err) {
       setError("Email sau parolă incorecte");
     }
@@ -25,10 +28,10 @@ const LoginForm = ({ closeModal }) => {
 
   return (
     <div className="login-form">
-      <h2>Login</h2>
+      <h2>Sign in</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Email</label>
+          <label class="label">Email</label>
           <input
             type="email"
             value={email}
@@ -37,7 +40,7 @@ const LoginForm = ({ closeModal }) => {
           />
         </div>
         <div>
-          <label>Password</label>
+          <label class="label">Password</label>
           <input
             type="password"
             value={password}
