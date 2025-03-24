@@ -1,0 +1,77 @@
+/* Stiluri pentru formularul de înregistrare din modal */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Distanță între câmpuri */
+    width: 100%;
+    max-width: 400px; /* Lățimea maximă a formularului */
+    margin: 0 auto;
+}
+
+.register-form input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    padding-right: 20px;
+    box-sizing: border-box; /* Se va aplica padding-ul fără a afecta dimensiunile inputului */
+}
+
+.register-form button {
+    padding: 12px 20px;
+    background-color: #6a4cff;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Distanță între butoane */
+}
+
+.register-form button:hover {
+    background-color: #826fd5;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column; /* Asta va pune butoanele pe verticală */
+    gap: 10px; /* Distanta între butoane */
+}
+
+/* Opțional, stil pentru butonul de "Cancel" */
+.cancel-button {
+    padding: 12px 20px;
+    background-color: #ff4d4d;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: #ff6666;
+}
+
+/* Adăugăm stiluri pentru mesajele de eroare */
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.label {
+    display: block;
+    font-weight: bold;
+}
+
+.success-message {
+    color: green;
+    font-size: 1rem;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  

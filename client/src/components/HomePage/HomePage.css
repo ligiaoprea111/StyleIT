@@ -51,6 +51,41 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Stiluri pentru modalul de register */
+.register-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundal semi-transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px); /* Efect de blur pe restul ecranului */
+  z-index: 9999; /* Asigură-te că modalul apare deasupra altor elemente */
+}
+
+.register-modal .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1; /* Overlay-ul să fie sub conținutul modalului */
+}
+
+.register-modal .modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 2; /* Modalul să fie deasupra overlay-ului */
+}
+
 .sign-in-button, .sign-up-button {
     all: unset;
     padding: 10px 20px;

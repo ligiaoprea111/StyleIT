@@ -31,7 +31,7 @@ const LoginForm = ({ closeModal }) => {
       <h2>Sign in</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label class="label">Email</label>
+          <label className="label">Email</label>
           <input
             type="email"
             value={email}
@@ -40,7 +40,7 @@ const LoginForm = ({ closeModal }) => {
           />
         </div>
         <div>
-          <label class="label">Password</label>
+          <label className="label">Password</label>
           <input
             type="password"
             value={password}
