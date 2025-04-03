@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboard.css';
-import logo from '../../assets/images/logo.png'; // Asigură-te că ai logo-ul în directorul corespunzător
+import logoGood from '../../assets/images/logoGood.png';
+import article1 from '../../assets/images/article1.jpg';
+import article2 from '../../assets/images/article2.jpg';
+import article3 from '../../assets/images/article3.jpg';
+import article4 from '../../assets/images/article4.jpg';
+import article5 from '../../assets/images/article5.jpg';
 
 const Dashboard = () => {
   const [weather, setWeather] = useState(null);
@@ -10,20 +15,63 @@ const Dashboard = () => {
   // Obține prognoza meteo
   useEffect(() => {
     const getWeather = async () => {
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=Bucharest&appid=727eb2aa28801b429db6e543a3479fbc`
-      );
-      setWeather(response.data);
+      try {
+        const response = await axios.get(
+          `https://api.openweathermap.org/data/2.5/forecast?q=Bucharest&appid=727eb2aa28801b429db6e543a3479fbc`
+        );
+  
+        // extragem doar prognoza de la ora 12:00 pentru fiecare zi
+        const dailyForecast = response.data.list.filter(item =>
+          item.dt_txt.includes("12:00:00")
+        );
+  
+        setWeather({
+          city: response.data.city,
+          forecast: dailyForecast
+        });
+      } catch (error) {
+        console.error("Eroare la preluarea vremii:", error);
+      }
     };
+  
     getWeather();
   }, []);
+  
 
   // Obține articolele despre modă
   useEffect(() => {
     const getArticles = async () => {
       setArticles([
-        { title: "Top 5 tendințe pentru primăvara 2025", link: "#" },
-        { title: "Cum să îți creezi un look de vară elegant", link: "#" },
+        {
+          title: "Top 5 tendințe pentru primăvara 2025",
+          description: "Descoperă ce piese vestimentare vor domina sezonul cald.",
+          link: "#",
+          image: article1
+        },
+        {
+          title: "Cum să îți creezi un look de vară elegant",
+          description: "Trucuri simple pentru un stil lejer și sofisticat.",
+          link: "#",
+          image: article2
+        },
+        {
+          title: "Culorile pastelate revin în forță",
+          description: "Află cum să le integrezi în ținutele de zi cu zi.",
+          link: "#",
+          image: article3
+        },
+        {
+          title: "Cum îți accesorizezi o ținută de seară",
+          description: "Accesoriile potrivite pot transforma complet un outfit.",
+          link: "#",
+          image: article4
+        },
+        {
+          title: "Ținute comfy pentru work-from-home",
+          description: "Stil și confort chiar și în zilele de Zoom meetings.",
+          link: "#",
+          image: article5
+        }        
       ]);
     };
     getArticles();
@@ -33,45 +81,98 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* Bara de sus */}
       <header className="header">
-        <div className="logo-container">
-          <img src={logo} alt="Logo" className="logo" />
-          <div className="welcome-message">
-            Hello, user! Welcome to styleIT, your digital wardrobe!
-          </div>
-        </div>
-      </header>
+  <div className="header-left">
+  <a href="/dashboard">
+  <img src={logoGood} alt="styleIT logo" className="logo" />
+  </a>
+  </div>
+  <div className="header-right">
+  <button className="header-link">
+  <i className="bi bi-person"></i> My Profile
+</button>
+<button className="header-link">
+  <i className="bi bi-bag"></i> My Wardrobe
+</button>
 
-      {/* Meniul lateral */}
-      <aside className="sidebar">
-        <div className="icon-container">
-          <div className="icon">👤</div>
-          <span>My Profile</span>
-        </div>
-        <div className="icon-container">
-          <div className="icon">👚</div>
-          <span>My Wardrobe</span>
-        </div>
-      </aside>
+  </div>
+</header>
+
 
       {/* Secțiunea meteo */}
       <section className="weather">
-        <h3>You might want to take weather into account when planning your outfits</h3>
-        {weather ? (
-          <p>Weather in Bucuresti: {weather.list[0].weather[0].description}</p>
-        ) : (
-          <p>Loading weather...</p>
-        )}
-      </section>
+  <h3>You might want to take weather into account when planning your outfits</h3>
+  {weather ? (
+    <div className="weather-widget">
+      {weather.forecast.map((item, index) => {
+        const date = new Date(item.dt_txt);
+        const day = date.toLocaleDateString("en-US", { weekday: "short" }); // ex: Mon, Tue
+        const icon = item.weather[0].icon; // ex: "04d"
+        const temp = Math.round(item.main.temp - 273.15); // Celsius
 
-      {/* Secțiunea articole de modă */}
-      <section className="fashion-articles">
-        <h3>New in Fashion</h3>
-        <ul>
-          {articles.map((article, index) => (
-            <li key={index}><a href={article.link}>{article.title}</a></li>
-          ))}
-        </ul>
-      </section>
+        return (
+          <div className="weather-day" key={index}>
+            <div className="day">{day}</div>
+            <img
+              src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
+              alt={item.weather[0].description}
+            />
+            <div className="temp">{temp}°C</div>
+          </div>
+        );
+      })}
+    </div>
+  ) : (
+    <p>Loading weather...</p>
+  )}
+</section>
+<section className="fashion-articles">
+  <h3>New in Fashion</h3>
+  <div className="articles-grid">
+    {articles.map((article, index) => (
+      <div className="article-card" key={index}>
+        <img src={article.image} alt={article.title} />
+        <div className="article-info">
+          <a href={article.link}>{article.title}</a>
+          <p className="article-desc">{article.description}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+<section className="outfit-planner">
+  <h3>Plan your outfits</h3>
+  <div className="calendar-grid">
+  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, idx) => {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay()); // duminica = prima zi
+
+    const currentDate = new Date(startOfWeek);
+    currentDate.setDate(startOfWeek.getDate() + idx);
+
+    const isToday = currentDate.toDateString() === today.toDateString();
+
+    const formattedDate = currentDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+
+    return (
+      <div className={`calendar-card ${isToday ? 'today' : ''}`} key={idx}>
+        <div className="calendar-day">
+          {day} {isToday && <span className="today-badge">Today</span>}
+        </div>
+        <div className="calendar-date">{formattedDate}</div>
+        <button className="calendar-add">
+          <i className="bi bi-plus-lg"></i>
+        </button>
+      </div>
+    );
+  })}
+</div>
+
+</section>
+
     </div>
   );
 };
