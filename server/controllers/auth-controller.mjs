@@ -28,6 +28,10 @@ export const loginUser = async (req, res) => {
       { expiresIn: '1h' } // Expiră după 1 oră
     );
 
+    // token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { algorithm: 'HS256', expiresIn: '1h' });
+//console.log("Generated JWT Token:", token);
+
+
     // Trimite token-ul ca răspuns
     res.json({ token });
   } catch (error) {
