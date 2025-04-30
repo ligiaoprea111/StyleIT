@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname } from 'path';
 import { createRequire } from 'module';
 
+
 const require = createRequire(import.meta.url);
 const configFile = require('../config/config.json');
 
@@ -39,6 +40,13 @@ for (const file of files) {
   const model = modelFunc(sequelize, Sequelize.DataTypes);
   db[model.name] = model;
 }
+
+// Set up manual association: User hasOne Profile
+if (db.User && db.Profile) {
+  db.User.hasOne(db.Profile, { foreignKey: 'userId', onDelete: 'CASCADE' });
+  db.Profile.belongsTo(db.User, { foreignKey: 'userId' });
+}
+
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

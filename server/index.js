@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import userRouter from "./routers/user-router.mjs";  //rutele pentru utilizatori
-import authRouter from "./routers/auth-router.mjs";  // Rutele pentru autentificare
-import stylePrefRoutes from './routers/stylepreferences-router.js';
+import db from "./models/index.js"; // 👈 import pentru sequelize + modele
+import userRouter from "./routers/user-router.mjs";
+import authRouter from "./routers/auth-router.mjs";
+import stylePrefRoutes from "./routers/stylepreferences-router.js";
 
-console.log("User router loaded:", userRouter); // Verifică dacă router-ul este importat corect
+console.log("User router loaded:", userRouter);
 
 dotenv.config();
 
@@ -15,14 +16,24 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/users", userRouter);  // Rutele pentru utilizatori
-app.use("/api/auth", authRouter);  // Rutele pentru autentificare
-app.use('/api', stylePrefRoutes);
+app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
+app.use("/api", stylePrefRoutes);
 
 app.get("/", (req, res) => {
   res.send("Serverul rulează!");
 });
 
-app.listen(PORT, () => {
-  console.log(`Serverul rulează pe portul ${PORT}`);
-});
+// 👇 pornim serverul după ce sincronizăm baza de date
+const startServer = async () => {
+  try {
+    await db.sequelize.sync({ alter: true }); // creează tabela Profile dacă nu există
+    app.listen(PORT, () => {
+      console.log(`Serverul rulează pe portul ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Eroare la pornirea serverului:", error);
+  }
+};
+
+startServer();
