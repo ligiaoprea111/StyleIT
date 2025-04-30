@@ -5,6 +5,8 @@ import db from "./models/index.js"; // 👈 import pentru sequelize + modele
 import userRouter from "./routers/user-router.mjs";
 import authRouter from "./routers/auth-router.mjs";
 import stylePrefRoutes from "./routers/stylepreferences-router.js";
+import profileRouter from "./routers/profile-router.js";
+
 
 console.log("User router loaded:", userRouter);
 
@@ -19,6 +21,8 @@ app.use(express.json());
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api", stylePrefRoutes);
+app.use("/api", profileRouter);
+
 
 app.get("/", (req, res) => {
   res.send("Serverul rulează!");
