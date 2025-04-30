@@ -5,12 +5,25 @@ import "./ProfilePage.css";
 const ProfilePage = ({ userId }) => {
   const [profile, setProfile] = useState(null);
   const [user, setUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    description: "",
+    location: "",
+    profilePicture: "",
+    birthday: ""
+  });
 
   useEffect(() => {
     const fetchProfile = async () => {
       const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
       const data = await res.json();
       setProfile(data);
+      setFormData({
+        description: data.description || "",
+        location: data.location || "",
+        profilePicture: data.profilePicture || "",
+        birthday: data.birthday || ""
+      });
     };
 
     const fetchUser = async () => {
@@ -22,6 +35,45 @@ const ProfilePage = ({ userId }) => {
     fetchProfile();
     fetchUser();
   }, [userId]);
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    // Validare simplă
+    if (formData.description.trim() === "" || formData.location.trim() === "") {
+      alert("Description and Location are required.");
+      return;
+    }
+  
+    if (formData.profilePicture && !formData.profilePicture.startsWith("http")) {
+      alert("Profile picture must be a valid URL.");
+      return;
+    }
+  
+    try {
+      const res = await fetch(`http://localhost:5000/api/profile/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+  
+      if (res.ok) {
+        const updated = await res.json();
+        setProfile(updated);
+        setShowModal(false);
+      } else {
+        alert("Something went wrong while updating the profile.");
+      }
+    } catch (err) {
+      console.error("Failed to update profile", err);
+      alert("Server error.");
+    }
+  };
+  
 
   if (!profile || !user) {
     return (
@@ -42,6 +94,9 @@ const ProfilePage = ({ userId }) => {
             className="profile-picture mb-3"
           />
           <h2 className="profile-name">{user.name}</h2>
+          <button className="btn btn-outline-primary mt-3" onClick={() => setShowModal(true)}>
+            Edit Profile
+          </button>
         </div>
         <hr />
         <div className="profile-info px-3">
@@ -50,6 +105,72 @@ const ProfilePage = ({ userId }) => {
           <p><i className="bi bi-cake me-2"></i>{profile.birthday || "Not specified"}</p>
         </div>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <form onSubmit={handleSubmit}>
+                <div className="modal-header">
+                  <h5 className="modal-title">Edit Profile</h5>
+                  <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                </div>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label">Description</label>
+                    <input
+                      type="text"
+                      name="description"
+                      className="form-control"
+                      value={formData.description}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Location</label>
+                    <input
+                      type="text"
+                      name="location"
+                      className="form-control"
+                      value={formData.location}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Profile Picture URL</label>
+                    <input
+                      type="text"
+                      name="profilePicture"
+                      className="form-control"
+                      value={formData.profilePicture}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Birthday</label>
+                    <input
+                      type="date"
+                      name="birthday"
+                      className="form-control"
+                      value={formData.birthday}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

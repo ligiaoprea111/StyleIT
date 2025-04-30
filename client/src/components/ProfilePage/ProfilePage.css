@@ -28,3 +28,7 @@
   font-size: 1.1rem;
   margin-bottom: 15px;
 }
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
