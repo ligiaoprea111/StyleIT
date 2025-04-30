@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LoginForm from "../LoginForm/LoginForm"; // Importă componenta LoginForm pentru formularul de login
 import RegisterForm from "../RegisterForm/RegisterForm"; // Importă formularul de înregistrare
 import './HomePage.css'; // Asigură-te că ai stilurile pentru această pagină
+
 
 const HomePage = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); // State pentru a controla vizibilitatea modalului
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // State pentru a controla vizibilitatea modalului de register
 
   const openLoginModal = () => {
-    setIsLoginModalOpen(true); // Deschide modalul
+    console.log("Login!");
+    setIsLoginModalOpen(true);
+    //console.log(isLoginModalOpen); // Deschide modalul
   };
 
   const closeLoginModal = () => {
-    setIsLoginModalOpen(false); // Închide modalul
+    setIsLoginModalOpen(false);
+   // console.log(isLoginModalOpen); // Închide modalul
   };
 
   const openRegisterModal = () => {
@@ -23,6 +27,11 @@ const HomePage = () => {
   const closeRegisterModal = () => {
     setIsRegisterModalOpen(false); // Închide modalul de register
   };
+
+  // useEffect pentru a urmări modificarea stării modalului
+  useEffect(() => {
+    console.log("isLoginModalOpen:", isLoginModalOpen); // Verifică starea actuală a modalului
+  }, [isLoginModalOpen]); // Aceasta se va apela de fiecare dată când se schimbă valoarea isLoginModalOpen
 
   return (
     <div className="homepage-container">
