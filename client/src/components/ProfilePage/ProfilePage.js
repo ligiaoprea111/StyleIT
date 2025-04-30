@@ -7,26 +7,16 @@ const ProfilePage = ({ userId }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Fetch profile
     const fetchProfile = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
-        const data = await res.json();
-        setProfile(data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
+      const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
+      const data = await res.json();
+      setProfile(data);
     };
 
-    // Fetch user
     const fetchUser = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/users/${userId}`);
-        const data = await res.json();
-        setUser(data);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
+      const res = await fetch(`http://localhost:5000/api/users/${userId}`);
+      const data = await res.json();
+      setUser(data);
     };
 
     fetchProfile();
@@ -54,10 +44,10 @@ const ProfilePage = ({ userId }) => {
           <h2 className="profile-name">{user.name}</h2>
         </div>
         <hr />
-        <div className="profile-info">
-          <p><strong>Description:</strong> {profile.description || "Not added yet."}</p>
-          <p><strong>Location:</strong> {profile.location || "Not specified"}</p>
-          <p><strong>Birthday:</strong> {profile.birthday || "Not set"}</p>
+        <div className="profile-info px-3">
+          <p><i className="bi bi-person-lines-fill me-2"></i>{profile.description || "No description yet."}</p>
+          <p><i className="bi bi-geo-alt-fill me-2"></i>{profile.location || "Unknown location"}</p>
+          <p><i className="bi bi-cake me-2"></i>{profile.birthday || "Not specified"}</p>
         </div>
       </div>
     </div>
