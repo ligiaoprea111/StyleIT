@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import User from "../models/user.mjs"; // Asigură-te că importi modelul corect
+import User from "../models/user.js"; // Asigură-te că importi modelul corect
 
 export const getUsers = async (req, res) => {
   try {

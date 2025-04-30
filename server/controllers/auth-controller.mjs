@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/user.mjs"; // Importă modelul User
+import User from "../models/user.js"; // Importă modelul User
 
 // Funcție pentru autentificare
 export const loginUser = async (req, res) => {

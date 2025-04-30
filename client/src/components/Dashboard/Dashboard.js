@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboard.css';
+import { useNavigate } from "react-router-dom";
 import logoGood from '../../assets/images/logoGood.png';
 import article1 from '../../assets/images/article1.jpg';
 import article2 from '../../assets/images/article2.jpg';
@@ -11,6 +12,10 @@ import article5 from '../../assets/images/article5.jpg';
 const Dashboard = () => {
   const [weather, setWeather] = useState(null);
   const [articles, setArticles] = useState([]);
+  const navigate = useNavigate();
+  const handleGoToProfile = () => {
+    navigate("/profile");
+  };
   
   // Obține prognoza meteo
   useEffect(() => {
@@ -87,7 +92,7 @@ const Dashboard = () => {
   </a>
   </div>
   <div className="header-right">
-  <button className="header-link">
+  <button className="header-link" onClick={handleGoToProfile}>
   <i className="bi bi-person"></i> My Profile
 </button>
 <button className="header-link">
