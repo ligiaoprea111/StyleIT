@@ -46,7 +46,7 @@ const HomePage = () => {
 
       {/* Modalul de login */}
       {isLoginModalOpen && (
-        <div className="modal">
+        <div className="login-modal">
           <div className="modal-overlay" onClick={closeLoginModal}></div>
           <div className="modal-content">
             <LoginForm closeModal={closeLoginModal} />
