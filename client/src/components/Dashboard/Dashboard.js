@@ -27,23 +27,48 @@ const Dashboard = () => {
   useEffect(() => {
     const getWeather = async () => {
       try {
-        const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/forecast?q=Bucharest&appid=727eb2aa28801b429db6e543a3479fbc`
-        );
-  
-        // extragem doar prognoza de la ora 12:00 pentru fiecare zi
-        const dailyForecast = response.data.list.filter(item =>
-          item.dt_txt.includes("12:00:00")
-        );
-  
-        setWeather({
-          city: response.data.city,
-          forecast: dailyForecast
+        // 1. Obține locația utilizatorului
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+    
+          // 2. Apelează OpenWeatherMap cu coordonatele
+          const response = await axios.get(
+            `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=727eb2aa28801b429db6e543a3479fbc`
+          );
+    
+          const dailyForecast = response.data.list.filter(item =>
+            item.dt_txt.includes("12:00:00")
+          );
+    
+          setWeather({
+            city: response.data.city,
+            forecast: dailyForecast
+          });
+        }, 
+        (error) => {
+          console.error("Geolocation error:", error);
+          // Fallback: dacă nu permite accesul la locație → folosim Bucharest
+          fallbackToBucharest();
         });
       } catch (error) {
         console.error("Eroare la preluarea vremii:", error);
       }
     };
+    
+    const fallbackToBucharest = async () => {
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=Bucharest&appid=727eb2aa28801b429db6e543a3479fbc`
+      );
+      const dailyForecast = response.data.list.filter(item =>
+        item.dt_txt.includes("12:00:00")
+      );
+      setWeather({
+        city: response.data.city,
+        forecast: dailyForecast
+      });
+    };
+    
   
     getWeather();
   }, []);
