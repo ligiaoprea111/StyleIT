@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboard.css';
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import logoGood from '../../assets/images/logoGood.png';
 import article1 from '../../assets/images/article1.jpg';
@@ -14,8 +15,13 @@ const Dashboard = () => {
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
   const handleGoToProfile = () => {
-    navigate("/profile");
-  };
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      navigate(`/profile/${userId}`);
+    } else {
+      console.error("User is not logged in");
+    }
+  };  
   
   // Obține prognoza meteo
   useEffect(() => {
@@ -87,9 +93,9 @@ const Dashboard = () => {
       {/* Bara de sus */}
       <header className="header">
   <div className="header-left">
-  <a href="/dashboard">
+  <Link to="/dashboard">
   <img src={logoGood} alt="styleIT logo" className="logo" />
-  </a>
+</Link>
   </div>
   <div className="header-right">
   <button className="header-link" onClick={handleGoToProfile}>

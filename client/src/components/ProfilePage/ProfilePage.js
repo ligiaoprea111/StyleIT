@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./ProfilePage.css";
 
-const ProfilePage = ({ userId }) => {
+const ProfilePage = () => {
+  const { id } = useParams();
+  const userId = parseInt(id);
+
   const [profile, setProfile] = useState(null);
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
     description: "",
     location: "",
@@ -15,25 +20,53 @@ const ProfilePage = ({ userId }) => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
-      const data = await res.json();
-      setProfile(data);
-      setFormData({
-        description: data.description || "",
-        location: data.location || "",
-        profilePicture: data.profilePicture || "",
-        birthday: data.birthday || ""
-      });
+      try {
+        const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
+
+        if (res.status === 404) {
+          const created = await fetch(`http://localhost:5000/api/profile`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId,
+              description: "New user. Add a description!",
+              location: "Unknown",
+              profilePicture: "",
+              birthday: ""
+            })
+          });
+          const createdData = await created.json();
+          setProfile(createdData);
+          setFormData(createdData);
+        } else {
+          const data = await res.json();
+          setProfile(data);
+          setFormData({
+            description: data.description || "",
+            location: data.location || "",
+            profilePicture: data.profilePicture || "",
+            birthday: data.birthday || ""
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching/creating profile:", error);
+      }
     };
 
     const fetchUser = async () => {
-      const res = await fetch(`http://localhost:5000/api/users/${userId}`);
-      const data = await res.json();
-      setUser(data);
+      try {
+        const res = await fetch(`http://localhost:5000/api/users/${userId}`);
+        const data = await res.json();
+        setUser(data);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
     };
 
-    fetchProfile();
-    fetchUser();
+    if (!isNaN(userId)) {
+      fetchProfile();
+      fetchUser();
+    }
   }, [userId]);
 
   const handleChange = (e) => {
@@ -42,29 +75,35 @@ const ProfilePage = ({ userId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Validare simplă
+
     if (formData.description.trim() === "" || formData.location.trim() === "") {
       alert("Description and Location are required.");
       return;
     }
-  
+
     if (formData.profilePicture && !formData.profilePicture.startsWith("http")) {
       alert("Profile picture must be a valid URL.");
       return;
     }
-  
+    
+    const payload = {
+      ...formData,
+      userId 
+    };
+
     try {
       const res = await fetch(`http://localhost:5000/api/profile/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
-  
+
       if (res.ok) {
         const updated = await res.json();
         setProfile(updated);
         setShowModal(false);
+        setSuccessMessage("Profilul a fost actualizat cu succes!");
+        setTimeout(() => setSuccessMessage(""), 3000);
       } else {
         alert("Something went wrong while updating the profile.");
       }
@@ -73,7 +112,6 @@ const ProfilePage = ({ userId }) => {
       alert("Server error.");
     }
   };
-  
 
   if (!profile || !user) {
     return (
@@ -97,6 +135,11 @@ const ProfilePage = ({ userId }) => {
           <button className="btn btn-outline-primary mt-3" onClick={() => setShowModal(true)}>
             Edit Profile
           </button>
+          {successMessage && (
+            <div className="alert alert-success mt-3" role="alert">
+              {successMessage}
+            </div>
+          )}
         </div>
         <hr />
         <div className="profile-info px-3">
@@ -106,7 +149,6 @@ const ProfilePage = ({ userId }) => {
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog">

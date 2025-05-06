@@ -19,9 +19,11 @@ const LoginForm = ({ closeModal }) => {
 
       // Verifică ce primești în răspuns
     console.log("Token received:", response.data.token);
+    console.log("User ID:", response.data.userId);
 
       // Salvează token-ul și redirecționează utilizatorul (pentru exemplu, nu folosim aici navigare, o putem adăuga mai târziu)
-      await localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data.userId);
       //closeModal(); // Închide modalul după ce utilizatorul s-a autentificat
      // navigate("/dashboard"); // Redirecționează utilizatorul la dashboard
      setTimeout(() => {

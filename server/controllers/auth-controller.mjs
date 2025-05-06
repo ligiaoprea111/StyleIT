@@ -35,7 +35,7 @@ export const loginUser = async (req, res) => {
 
 
     // Trimite token-ul ca răspuns
-    res.json({ token });
+    res.json({ token, userId: user.id  });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

@@ -11,7 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} /> {/* Ruta pentru pagina home */}
           <Route path="/dashboard" element={<Dashboard />} /> {/* Adaugă dashboard-ul */}
-          <Route path="/profile" element={<ProfilePage userId={1} />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
         </Routes>
       </div>
     </Router>
