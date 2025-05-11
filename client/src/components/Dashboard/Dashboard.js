@@ -79,32 +79,32 @@ const Dashboard = () => {
     const getArticles = async () => {
       setArticles([
         {
-          title: "Top 5 tendințe pentru primăvara 2025",
-          description: "Descoperă ce piese vestimentare vor domina sezonul cald.",
+          title: "Top 5 trends for spring 2025",
+          description: "Discover which clothing pieces will dominate the warm season.",
           link: "#",
           image: article1
         },
         {
-          title: "Cum să îți creezi un look de vară elegant",
-          description: "Trucuri simple pentru un stil lejer și sofisticat.",
+          title: "How to create an elegant summer look",
+          description: "Simple tricks for a light and sophisticated style.",
           link: "#",
           image: article2
         },
         {
-          title: "Culorile pastelate revin în forță",
-          description: "Află cum să le integrezi în ținutele de zi cu zi.",
+          title: "Pastel colors are making a comeback",
+          description: "Learn how to integrate them into your everyday outfits.",
           link: "#",
           image: article3
         },
         {
-          title: "Cum îți accesorizezi o ținută de seară",
-          description: "Accesoriile potrivite pot transforma complet un outfit.",
+          title: "How to accessorize an evening outfit",
+          description: "The right accessories can completely transform an outfit.",
           link: "#",
           image: article4
         },
         {
-          title: "Ținute comfy pentru work-from-home",
-          description: "Stil și confort chiar și în zilele de Zoom meetings.",
+          title: "Comfy outfits for work-from-home",
+          description: "Style and comfort even on Zoom meeting days.",
           link: "#",
           image: article5
         }        
