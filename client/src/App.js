@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage/HomePage"; // Importă pagina HomePage
 import Dashboard from "./components/Dashboard/Dashboard"; // Pagină de dashboard
 import ProfilePage from "./components/ProfilePage/ProfilePage";
+import Wardrobe from './components/Wardrobe/Wardrobe';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route path="/" element={<HomePage />} /> {/* Ruta pentru pagina home */}
           <Route path="/dashboard" element={<Dashboard />} /> {/* Adaugă dashboard-ul */}
           <Route path="/profile/:id" element={<ProfilePage />} />
+          <Route path="/wardrobe" element={<Wardrobe />} />
         </Routes>
       </div>
     </Router>

@@ -23,6 +23,10 @@ const Dashboard = () => {
     }
   };  
   
+  const handleGoToWardrobe = () => {
+    navigate("/wardrobe");
+  };
+  
   // Obține prognoza meteo
   useEffect(() => {
     const getWeather = async () => {
@@ -126,7 +130,7 @@ const Dashboard = () => {
   <button className="header-link" onClick={handleGoToProfile}>
   <i className="bi bi-person"></i> My Profile
 </button>
-<button className="header-link">
+<button className="header-link" onClick={handleGoToWardrobe}>
   <i className="bi bi-bag"></i> My Wardrobe
 </button>
 

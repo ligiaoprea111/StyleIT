@@ -1,0 +1,64 @@
+.wardrobe-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.wardrobe-header svg {
+  color: #6c63ff; /* Stylish purple for the icon */
+  margin-right: 0.75rem;
+}
+
+.wardrobe-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.nav-tabs .nav-link.active,
+.nav-pills .nav-link.active {
+  background-color: #6c63ff !important;
+  color: #fff !important;
+  border-color: #6c63ff !important;
+}
+
+.card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border-radius: 12px;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(108,99,255,0.15);
+}
+
+.card-img-top {
+  height: 220px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.alert-info {
+  background: #f3f2fd;
+  color: #6c63ff;
+  border: none;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 2rem;
+  border-radius: 8px;
+}
+
+@media (max-width: 576px) {
+  .card-img-top {
+    height: 140px;
+  }
+  .wardrobe-title {
+    font-size: 1.3rem;
+  }
+} 

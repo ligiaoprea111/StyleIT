@@ -6,6 +6,7 @@ import userRouter from "./routers/user-router.mjs";
 import authRouter from "./routers/auth-router.mjs";
 import stylePrefRoutes from "./routers/stylepreferences-router.js";
 import profileRouter from "./routers/profile-router.js";
+import clothingRouter from "./routers/clothing-router.js";
 
 
 console.log("User router loaded:", userRouter);
@@ -22,6 +23,7 @@ app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api", stylePrefRoutes);
 app.use("/api", profileRouter);
+app.use("/api", clothingRouter);
 
 
 app.get("/", (req, res) => {
