@@ -71,13 +71,10 @@ const Wardrobe = () => {
 
   return (
     <>
-      <div style={{ padding: "2rem", textAlign: "center", fontSize: "2rem" }}>
-        Your digital wardrobe
-      </div>
       <Container className="mt-4">
         <div className="d-flex align-items-center mb-4">
           <FaTshirt size={36} className="me-2" />
-          <h2 className="mb-0">My Wardrobe</h2>
+          <h2 className="mb-0"> Your Digital Wardrobe</h2>
         </div>
         <Tab.Container activeKey={activeTab} onSelect={(k) => { setActiveTab(k); setActiveSubcategory(null); }}>
           <Nav variant="tabs" className="mb-3">

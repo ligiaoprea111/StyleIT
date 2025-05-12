@@ -19,6 +19,9 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the public/images directory
+app.use('/images', express.static('public/images'));
+
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api", stylePrefRoutes);

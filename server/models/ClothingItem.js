@@ -57,6 +57,8 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     }
+  }, {
+    timestamps: false
   });
 
   return ClothingItem;
