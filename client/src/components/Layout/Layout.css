@@ -1,0 +1,17 @@
+.main-content {
+  margin-left: 250px;
+  min-height: 100vh;
+  background-color: #fff9ed;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed + .main-content {
+  margin-left: 70px;
+}
+
+.page-container {
+  padding: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+} 

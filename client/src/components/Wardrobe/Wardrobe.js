@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Container, Tab, Nav, Row, Col, Card, Alert } from "react-bootstrap";
+import { Tab, Nav, Row, Col, Card, Alert } from "react-bootstrap";
 import { FaTshirt } from "react-icons/fa";
 import "./Wardrobe.css"; // Uncomment if you want to add custom styles
+import ImageModal from '../ImageModal/ImageModal';
+import Layout from '../Layout/Layout';
 
 // Example categories and subcategories (replace with your real data)
 // const categories = [
@@ -37,6 +39,7 @@ const Wardrobe = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [activeSubcategory, setActiveSubcategory] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Fetch clothing items from backend (replace with your API call)
   useEffect(() => {
@@ -69,12 +72,20 @@ const Wardrobe = () => {
 
   console.log("activeTab:", activeTab, "activeSubcategory:", activeSubcategory, "filteredItems:", filteredItems);
 
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+  };
+
   return (
-    <>
-      <Container className="mt-4">
+    <Layout>
+      <div className="wardrobe-container">
         <div className="d-flex align-items-center mb-4">
           <FaTshirt size={36} className="me-2" />
-          <h2 className="mb-0"> Your Digital Wardrobe</h2>
+          <h2 className="mb-0">Your Digital Wardrobe</h2>
         </div>
         <Tab.Container activeKey={activeTab} onSelect={(k) => { setActiveTab(k); setActiveSubcategory(null); }}>
           <Nav variant="tabs" className="mb-3">
@@ -122,7 +133,7 @@ const Wardrobe = () => {
                   {filteredItems.map((item) => (
                     <Col key={item.id}>
                       <Card>
-                        <Card.Img variant="top" src={item.imageUrl} alt={item.name} />
+                        <Card.Img variant="top" src={item.imageUrl} alt={item.name} onClick={() => handleImageClick(item.imageUrl)} style={{ cursor: 'pointer' }} />
                         <Card.Body>
                           <Card.Title>{item.name}</Card.Title>
                           <Card.Text>
@@ -138,8 +149,15 @@ const Wardrobe = () => {
             </Col>
           </Row>
         </Tab.Container>
-      </Container>
-    </>
+      </div>
+
+      {selectedImage && (
+        <ImageModal 
+          imageUrl={selectedImage} 
+          onClose={handleCloseModal} 
+        />
+      )}
+    </Layout>
   );
 };
 

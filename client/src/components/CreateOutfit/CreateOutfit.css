@@ -1,0 +1,17 @@
+.create-outfit-container {
+  padding: 2rem;
+  background: #fff9ed;
+  min-height: 100vh;
+}
+
+.create-outfit-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #6c63ff;
+  margin-bottom: 1rem;
+}
+
+.create-outfit-desc {
+  font-size: 1.1rem;
+  color: #555;
+} 

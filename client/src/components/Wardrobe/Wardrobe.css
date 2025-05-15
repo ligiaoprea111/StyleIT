@@ -1,3 +1,10 @@
+.wardrobe-container {
+  background-color: #fff9ed;
+  min-height: 100vh;
+  padding: 2rem;
+  width: 100%;
+}
+
 .wardrobe-header {
   display: flex;
   align-items: center;
