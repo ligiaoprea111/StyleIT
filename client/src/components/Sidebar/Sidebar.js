@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Nav } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
-import { FaTshirt, FaHome, FaUser, FaCog, FaShoppingBag, FaChevronLeft, FaRegCalendarAlt, FaPlusSquare } from 'react-icons/fa';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaTshirt, FaHome, FaUser, FaCog, FaShoppingBag, FaChevronLeft, FaRegCalendarAlt, FaPlusSquare, FaSignOutAlt } from 'react-icons/fa';
 import './Sidebar.css';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -18,6 +19,12 @@ const Sidebar = () => {
     { path: '/calendar', icon: <FaRegCalendarAlt />, label: 'Calendar Planner' },
     { path: '/settings', icon: <FaCog />, label: 'Settings' },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -44,6 +51,12 @@ const Sidebar = () => {
             </Nav.Link>
           </Nav.Item>
         ))}
+        <Nav.Item className="mt-auto">
+          <Nav.Link onClick={handleLogout} className="logout-link">
+            <span className="nav-icon"><FaSignOutAlt /></span>
+            <span className="nav-label">Logout</span>
+          </Nav.Link>
+        </Nav.Item>
       </Nav>
     </div>
   );

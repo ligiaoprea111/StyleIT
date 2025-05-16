@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./ProfilePage.css";
+import StylePreferencesForm from "../StylePreferencesForm/StylePreferencesForm";
+import Layout from "../Layout/Layout"; // ✅ adăugat Layout
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -10,6 +12,7 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showPreferencesForm, setShowPreferencesForm] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
     description: "",
@@ -22,7 +25,6 @@ const ProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
-
         if (res.status === 404) {
           const created = await fetch(`http://localhost:5000/api/profile`, {
             method: "POST",
@@ -85,10 +87,10 @@ const ProfilePage = () => {
       alert("Profile picture must be a valid URL.");
       return;
     }
-    
+
     const payload = {
       ...formData,
-      userId 
+      userId
     };
 
     try {
@@ -123,97 +125,119 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="container mt-5 profile-wrapper">
-      <div className="card shadow-lg p-4 rounded profile-card">
-        <div className="text-center">
-          <img
-            src={profile.profilePicture || "/default-profile.jpg"}
-            alt="Profile"
-            className="profile-picture mb-3"
-          />
-          <h2 className="profile-name">{user.name}</h2>
-          <button className="btn btn-outline-primary mt-3" onClick={() => setShowModal(true)}>
-            Edit Profile
-          </button>
-          {successMessage && (
-            <div className="alert alert-success mt-3" role="alert">
-              {successMessage}
+    <Layout> {/* ✅ Tot conținutul mutat în Layout */}
+      <div className="container mt-5 profile-wrapper">
+        <div className="row">
+          {/* Sidebar */}
+          <div className="col-md-4 profile-sidebar">
+            <div className="text-center">
+              <img
+                src={profile.profilePicture || "/default-profile.jpg"}
+                alt="Profile"
+                className="profile-picture mb-3"
+              />
+              <h2 className="profile-name">{user.name}</h2>
+              <button className="btn btn-outline-primary mt-3" onClick={() => setShowModal(true)}>
+                Edit Profile
+              </button>
+              <button
+                className="btn-style-preferences mt-3"
+                onClick={() => setShowPreferencesForm(prev => !prev)}
+              >
+                {showPreferencesForm ? "Hide Style Preferences" : "Edit Style Preferences"}
+              </button>
+              {successMessage && (
+                <div className="alert alert-success mt-3" role="alert">
+                  {successMessage}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <hr />
-        <div className="profile-info px-3">
-          <p><i className="bi bi-person-lines-fill me-2"></i>{profile.description || "No description yet."}</p>
-          <p><i className="bi bi-geo-alt-fill me-2"></i>{profile.location || "Unknown location"}</p>
-          <p><i className="bi bi-cake me-2"></i>{profile.birthday || "Not specified"}</p>
-        </div>
-      </div>
+          </div>
 
-      {showModal && (
-        <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <form onSubmit={handleSubmit}>
-                <div className="modal-header">
-                  <h5 className="modal-title">Edit Profile</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+          {/* Main content */}
+          <div className="col-md-8 profile-main">
+            <div className="card shadow-lg p-4 rounded profile-card">
+              <div className="profile-info px-3">
+                <p><i className="bi bi-person-lines-fill me-2"></i>{profile.description || "No description yet."}</p>
+                <p><i className="bi bi-geo-alt-fill me-2"></i>{profile.location || "Unknown location"}</p>
+                <p><i className="bi bi-cake me-2"></i>{profile.birthday || "Not specified"}</p>
+              </div>
+
+              {showPreferencesForm && (
+                <div className="card shadow-sm p-4 mt-4">
+                  <StylePreferencesForm />
                 </div>
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label className="form-label">Description</label>
-                    <input
-                      type="text"
-                      name="description"
-                      className="form-control"
-                      value={formData.description}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Location</label>
-                    <input
-                      type="text"
-                      name="location"
-                      className="form-control"
-                      value={formData.location}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Profile Picture URL</label>
-                    <input
-                      type="text"
-                      name="profilePicture"
-                      className="form-control"
-                      value={formData.profilePicture}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Birthday</label>
-                    <input
-                      type="date"
-                      name="birthday"
-                      className="form-control"
-                      value={formData.birthday}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    Save Changes
-                  </button>
-                </div>
-              </form>
+              )}
             </div>
           </div>
         </div>
-      )}
-    </div>
+
+        {showModal && (
+          <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <form onSubmit={handleSubmit}>
+                  <div className="modal-header">
+                    <h5 className="modal-title">Edit Profile</h5>
+                    <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="mb-3">
+                      <label className="form-label">Description</label>
+                      <input
+                        type="text"
+                        name="description"
+                        className="form-control"
+                        value={formData.description}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Location</label>
+                      <input
+                        type="text"
+                        name="location"
+                        className="form-control"
+                        value={formData.location}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Profile Picture URL</label>
+                      <input
+                        type="text"
+                        name="profilePicture"
+                        className="form-control"
+                        value={formData.profilePicture}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Birthday</label>
+                      <input
+                        type="date"
+                        name="birthday"
+                        className="form-control"
+                        value={formData.birthday}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                      Cancel
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                      Save Changes
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </Layout>
   );
 };
 

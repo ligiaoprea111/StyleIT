@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { FaTshirt, FaShoppingBag, FaUser } from 'react-icons/fa';
 import axios from 'axios';
 import './Dashboard.css';
@@ -13,6 +14,7 @@ import article5 from '../../assets/images/article5.jpg';
 const Dashboard = () => {
   const [weather, setWeather] = useState(null);
   const [articles, setArticles] = useState([]);
+  const userId = localStorage.getItem('userId');
 
   // Helper pentru ziua săptămânii
   const getDayName = (dateStr) => {
@@ -109,51 +111,57 @@ const Dashboard = () => {
         
         <Row className="g-4 mt-4">
           <Col md={4}>
-            <Card className="dashboard-card">
-              <Card.Body>
-                <div className="d-flex align-items-center">
-                  <div className="icon-container">
-                    <FaTshirt size={24} />
+            <Link to="/wardrobe" className="dashboard-link">
+              <Card className="dashboard-card">
+                <Card.Body>
+                  <div className="d-flex align-items-center">
+                    <div className="icon-container">
+                      <FaTshirt size={24} />
+                    </div>
+                    <div className="ms-3">
+                      <h3 className="card-title">Your Wardrobe</h3>
+                      <p className="card-text">View and manage your clothing items</p>
+                    </div>
                   </div>
-                  <div className="ms-3">
-                    <h3 className="card-title">Your Wardrobe</h3>
-                    <p className="card-text">View and manage your clothing items</p>
-                  </div>
-                </div>
-              </Card.Body>
-            </Card>
+                </Card.Body>
+              </Card>
+            </Link>
           </Col>
 
           <Col md={4}>
-            <Card className="dashboard-card">
-              <Card.Body>
-                <div className="d-flex align-items-center">
-                  <div className="icon-container">
-                    <FaShoppingBag size={24} />
+            <Link to="/add-item" className="dashboard-link">
+              <Card className="dashboard-card">
+                <Card.Body>
+                  <div className="d-flex align-items-center">
+                    <div className="icon-container">
+                      <FaShoppingBag size={24} />
+                    </div>
+                    <div className="ms-3">
+                      <h3 className="card-title">Add Items</h3>
+                      <p className="card-text">Add new items to your wardrobe</p>
+                    </div>
                   </div>
-                  <div className="ms-3">
-                    <h3 className="card-title">Add Items</h3>
-                    <p className="card-text">Add new items to your wardrobe</p>
-                  </div>
-                </div>
-              </Card.Body>
-            </Card>
+                </Card.Body>
+              </Card>
+            </Link>
           </Col>
 
           <Col md={4}>
-            <Card className="dashboard-card">
-              <Card.Body>
-                <div className="d-flex align-items-center">
-                  <div className="icon-container">
-                    <FaUser size={24} />
+            <Link to={`/profile/${userId}`} className="dashboard-link">
+              <Card className="dashboard-card">
+                <Card.Body>
+                  <div className="d-flex align-items-center">
+                    <div className="icon-container">
+                      <FaUser size={24} />
+                    </div>
+                    <div className="ms-3">
+                      <h3 className="card-title">Your Profile</h3>
+                      <p className="card-text">Manage your account settings</p>
+                    </div>
                   </div>
-                  <div className="ms-3">
-                    <h3 className="card-title">Your Profile</h3>
-                    <p className="card-text">Manage your account settings</p>
-                  </div>
-                </div>
-              </Card.Body>
-            </Card>
+                </Card.Body>
+              </Card>
+            </Link>
           </Col>
         </Row>
 

@@ -129,4 +129,19 @@
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+}
+
+.logout-link {
+  margin-top: auto;
+  color: #dc3545 !important;
+  transition: all 0.3s ease;
+}
+
+.logout-link:hover {
+  background-color: rgba(220, 53, 69, 0.1) !important;
+  color: #dc3545 !important;
+}
+
+.logout-link .nav-icon {
+  color: #dc3545;
 } 
