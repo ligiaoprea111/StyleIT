@@ -4,6 +4,7 @@ import HomePage from "./components/HomePage/HomePage"; // Importă pagina HomePa
 import Dashboard from "./components/Dashboard/Dashboard"; // Pagină de dashboard
 import ProfilePage from "./components/ProfilePage/ProfilePage";
 import Wardrobe from './components/Wardrobe/Wardrobe';
+import AddToWardrobe from './components/Wardrobe/AddToWardrobe';
 import Sidebar from './components/Sidebar/Sidebar';
 import CalendarPlanner from './components/CalendarPlanner/CalendarPlanner';
 import CreateOutfit from './components/CreateOutfit/CreateOutfit';
@@ -21,6 +22,7 @@ const AppContent = () => {
         <Route path="/dashboard" element={<Dashboard />} /> {/* Adaugă dashboard-ul */}
         <Route path="/profile/:id" element={<ProfilePage />} />
         <Route path="/wardrobe" element={<Wardrobe />} />
+        <Route path="/wardrobe/add" element={<AddToWardrobe />} />
         <Route path="/calendar" element={<CalendarPlanner />} />
         <Route path="/create-outfit" element={<CreateOutfit />} />
       </Routes>

@@ -14,7 +14,7 @@ const Sidebar = () => {
     { path: '/dashboard', icon: <FaHome />, label: 'Home' },
     { path: `/profile/${userId}`, icon: <FaUser />, label: 'Profile' },
     { path: '/wardrobe', icon: <FaTshirt />, label: 'Wardrobe' },
-    { path: '/add-item', icon: <FaShoppingBag />, label: 'Add to Wardrobe' },
+    { path: '/wardrobe/add', icon: <FaShoppingBag />, label: 'Add to Wardrobe' },
     { path: '/create-outfit', icon: <FaPlusSquare />, label: 'Create Outfit' },
     { path: '/calendar', icon: <FaRegCalendarAlt />, label: 'Calendar Planner' },
     { path: '/settings', icon: <FaCog />, label: 'Settings' },

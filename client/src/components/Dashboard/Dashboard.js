@@ -129,7 +129,7 @@ const Dashboard = () => {
           </Col>
 
           <Col md={4}>
-            <Link to="/add-item" className="dashboard-link">
+            <Link to="/wardrobe/add" className="dashboard-link">
               <Card className="dashboard-card">
                 <Card.Body>
                   <div className="d-flex align-items-center">

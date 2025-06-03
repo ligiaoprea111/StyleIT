@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Tab, Nav, Row, Col, Card, Alert } from "react-bootstrap";
-import { FaTshirt } from "react-icons/fa";
+import { Tab, Nav, Row, Col, Card, Alert, Button } from "react-bootstrap";
+import { FaTshirt, FaPlus } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "./Wardrobe.css"; // Uncomment if you want to add custom styles
 import ImageModal from '../ImageModal/ImageModal';
 import Layout from '../Layout/Layout';
@@ -35,6 +36,7 @@ const allTabs = [
 ];
 
 const Wardrobe = () => {
+  const navigate = useNavigate();
   const [clothingItems, setClothingItems] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
   const [activeSubcategory, setActiveSubcategory] = useState(null);
@@ -83,9 +85,18 @@ const Wardrobe = () => {
   return (
     <Layout>
       <div className="wardrobe-container">
-        <div className="d-flex align-items-center mb-4">
-          <FaTshirt size={36} className="me-2" />
-          <h2 className="mb-0">Your Digital Wardrobe</h2>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="d-flex align-items-center">
+            <FaTshirt size={36} className="me-2" />
+            <h2 className="mb-0">Your Digital Wardrobe</h2>
+          </div>
+          <Button 
+            variant="primary" 
+            className="d-flex align-items-center gap-2"
+            onClick={() => navigate('/wardrobe/add')}
+          >
+            <FaPlus /> Add Item
+          </Button>
         </div>
         <Tab.Container activeKey={activeTab} onSelect={(k) => { setActiveTab(k); setActiveSubcategory(null); }}>
           <Nav variant="tabs" className="mb-3">
