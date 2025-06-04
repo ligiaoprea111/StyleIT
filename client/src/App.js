@@ -8,6 +8,7 @@ import AddToWardrobe from './components/Wardrobe/AddToWardrobe';
 import Sidebar from './components/Sidebar/Sidebar';
 import CalendarPlanner from './components/CalendarPlanner/CalendarPlanner';
 import CreateOutfit from './components/CreateOutfit/CreateOutfit';
+import AIAssistant from './components/AIAssistant';
 
 // Create a wrapper component to handle the conditional rendering
 const AppContent = () => {
@@ -25,6 +26,7 @@ const AppContent = () => {
         <Route path="/wardrobe/add" element={<AddToWardrobe />} />
         <Route path="/calendar" element={<CalendarPlanner />} />
         <Route path="/create-outfit" element={<CreateOutfit />} />
+        <Route path="/ai-assistant" element={<AIAssistant />} />
       </Routes>
     </div>
   );
