@@ -7,9 +7,6 @@ const router = express.Router();
 // All routes require authentication
 router.use(authenticateToken);
 
-// Generate text response
-router.post('/generate-text', GeminiController.generateText);
-
 // Generate outfit recommendation
 router.post('/outfit-recommendation', GeminiController.generateOutfitRecommendation);
 

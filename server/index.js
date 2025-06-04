@@ -13,6 +13,9 @@ console.log("User router loaded:", userRouter);
 
 dotenv.config();
 
+console.log('dotenv config result:', dotenv.config());
+console.log('JWT_SECRET after dotenv:', process.env.JWT_SECRET);
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 

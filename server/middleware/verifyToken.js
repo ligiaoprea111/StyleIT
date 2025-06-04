@@ -5,14 +5,14 @@ dotenv.config();  // pentru a încărca variabilele din .env
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Preia tokenul
 
-  console.log(process.env.JWT_SECRET_KEY);  // Verifică valoarea secretului
+  console.log(process.env.JWT_SECRET);  // Verifică valoarea secretului
   console.log("Token Type:", token);  // Verifică token-ul generat
 
   if (!token) {
     return res.status(403).json({ message: "Token is missing" });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET_KEY, { algorithms: ['HS256'] }, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] }, (err, decoded) => {
     if (err) {
       console.log("JWT Error:", err); // Afișează eroarea completă
       return res.status(401).json({ message: "Unauthorized!" });
