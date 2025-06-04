@@ -8,6 +8,7 @@ import stylePrefRoutes from "./routers/stylepreferences-router.js";
 import profileRouter from "./routers/profile-router.js";
 import clothingRouter from "./routers/clothing-router.js";
 import geminiRouter from "./routers/geminiRouter.js";
+import outfitRouter from "./routers/outfitRouter.js";
 
 console.log("User router loaded:", userRouter);
 
@@ -31,6 +32,7 @@ app.use("/api", stylePrefRoutes);
 app.use("/api", profileRouter);
 app.use("/api", clothingRouter);
 app.use("/api/ai", geminiRouter);
+app.use("/api/outfits", outfitRouter);
 
 app.get("/", (req, res) => {
   res.send("Serverul rulează!");

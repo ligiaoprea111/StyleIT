@@ -1,0 +1,89 @@
+.outfit-item {
+    position: relative;
+    text-align: center;
+    /* Add border and rounded corners for items */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden; /* Hide overflow for rounded corners */
+}
+
+.outfit-item-image {
+    width: 100%;
+    height: 100px; /* Fixed height for images */
+    object-fit: cover; /* Crop image to cover the area */
+}
+
+.item-name-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
+    color: white;
+    padding: 5px;
+    font-size: 0.7em; /* Smaller font */
+    text-align: center;
+    opacity: 1; /* Always visible for neatness */
+    /* Remove transition */
+}
+
+.outfit-item:hover .item-name-overlay {
+   opacity: 1; /* Keep visible on hover */
+}
+
+.clothing-item-card {
+  border: 1px solid #dee2e6; /* Default border */
+  transition: border-color 0.2s ease-in-out;
+  /* Add some padding and rounded corners to the main outfit card */
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add subtle shadow */
+  margin-bottom: 15px; /* Space between cards */
+}
+
+.clothing-item-card.selected {
+  border-color: #007bff; /* Highlight color */
+  border-width: 2px;
+}
+
+/* Style for the expanded details section */
+.outfit-details-expanded {
+  margin-top: 15px; /* Space below date */
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.outfit-details-expanded h6 {
+    margin-bottom: 10px;
+    color: #555; /* Slightly greyed out heading */
+}
+
+.outfit-actions {
+    margin-left: auto; /* Push buttons to the right */
+}
+
+/* Style for the list of items in expanded view */
+.outfit-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Responsive grid for items */
+    gap: 10px; /* Space between item cards */
+    margin-top: 10px;
+}
+
+.outfit-item .card-body {
+    padding: 5px; /* Smaller padding in item cards */
+    font-size: 0.8em; /* Smaller text in item cards */
+}
+
+.outfit-item .card-title {
+    font-size: 1em; /* Adjust title size */
+    margin-bottom: 0;
+    white-space: nowrap; /* Prevent title wrap */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis if name is too long */
+}
+
+.outfit-item .card-text {
+     font-size: 0.9em;
+     margin-bottom: 0;
+} 

@@ -47,6 +47,19 @@ if (db.User && db.Profile) {
   db.Profile.belongsTo(db.User, { foreignKey: 'userId' });
 }
 
+// Set up manual associations for Outfit and ClothingItem
+if (db.Outfit && db.ClothingItem) {
+  db.Outfit.belongsToMany(db.ClothingItem, {
+    through: 'OutfitItems',
+    foreignKey: 'outfitId',
+    otherKey: 'clothingItemId',
+  });
+  db.ClothingItem.belongsToMany(db.Outfit, {
+    through: 'OutfitItems',
+    foreignKey: 'clothingItemId',
+    otherKey: 'outfitId',
+  });
+}
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
