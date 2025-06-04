@@ -9,6 +9,7 @@ import profileRouter from "./routers/profile-router.js";
 import clothingRouter from "./routers/clothing-router.js";
 import geminiRouter from "./routers/geminiRouter.js";
 import outfitRouter from "./routers/outfitRouter.js";
+import scheduledOutfitRouter from "./routers/scheduledoutfits-router.js";
 
 console.log("User router loaded:", userRouter);
 
@@ -28,6 +29,7 @@ app.use('/images', express.static('public/images'));
 
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/scheduled-outfits", scheduledOutfitRouter);
 app.use("/api", stylePrefRoutes);
 app.use("/api", profileRouter);
 app.use("/api", clothingRouter);
@@ -41,7 +43,7 @@ app.get("/", (req, res) => {
 // 👇 pornim serverul după ce sincronizăm baza de date
 const startServer = async () => {
   try {
-    await db.sequelize.sync({ alter: true }); // creează tabela Profile dacă nu există
+    await db.sequelize.sync(); // creează tabela Profile dacă nu există
     app.listen(PORT, () => {
       console.log(`Serverul rulează pe portul ${PORT}`);
     });

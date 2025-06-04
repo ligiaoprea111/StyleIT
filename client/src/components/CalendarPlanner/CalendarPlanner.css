@@ -2,6 +2,10 @@
   padding: 2rem;
   background: #fff9ed;
   min-height: 100vh;
+  display: flex; /* Use flexbox for centering */
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Center items horizontally */
+  width: 100%; /* Ensure container takes full width */
 }
 
 .calendar-planner-title {
@@ -9,9 +13,185 @@
   font-weight: 700;
   color: #6c63ff;
   margin-bottom: 1rem;
+  text-align: center; /* Center title */
 }
 
 .calendar-planner-desc {
   font-size: 1.1rem;
   color: #555;
+  margin-bottom: 2rem; /* Add space below description */
+  text-align: center; /* Center description */
+}
+
+.calendar-wrapper {
+  width: 100%; /* Allow wrapper to take full width */
+  max-width: 800px; /* Match max-width of calendar */
+  margin: 0 auto 2rem auto; /* Center horizontally and add space below */
+  display: flex; /* Use flexbox */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically if needed */
+}
+
+/* Styles to make the react-calendar larger and look like Bootstrap card */
+.react-calendar {
+  width: 100%; /* Make it take full width of its container */
+  border: 1px solid #dee2e6; /* Bootstrap border color */
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Bootstrap font stack */
+  line-height: 1.5; /* Bootstrap line height */
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); /* Bootstrap shadow */
+  border-radius: .25rem; /* Bootstrap border radius */
+  padding: 1rem; /* Add padding */
+  background-color: #fff; /* White background */
+}
+
+.react-calendar__navigation {
+  display: flex; /* Use flexbox for navigation */
+  height: 44px; /* Standard height */
+  margin-bottom: 1em; /* Space below navigation */
+}
+
+.react-calendar__navigation button {
+  min-width: 44px;
+  background: none;
+  font-size: 1em; /* Slightly smaller font */
+  color: #007bff; /* Bootstrap primary color */
+  font-weight: 600; /* Semi-bold */
+  margin: 0 5px; /* Add horizontal margin */
+  border-radius: .25rem; /* Rounded corners */
+  transition: all 0.3s ease;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: #e9ecef; /* Light grey hover */
+  color: #0056b3; /* Darker primary on hover */
+}
+
+.react-calendar__navigation button[disabled] {
+  background-color: #f8f9fa; /* Lighter grey */
+  color: #6c757d; /* Muted text */
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.8em; /* Smaller weekday font */
+  color: #495057; /* Dark grey */
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: .5em;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #dc3545; /* Bootstrap danger color for weekends */
+}
+
+.react-calendar__tile {
+  max-width: 100%;
+  text-align: center;
+  padding: .75em .5em; /* Adjust padding */
+  background: none;
+  border-radius: .25rem; /* Rounded corners */
+  transition: all 0.2s ease;
+}
+
+.react-calendar__tile:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: #e9ecef; /* Light grey hover */
+}
+
+.react-calendar__tile--now {
+  background-color: #ffc107; /* Bootstrap warning color for today */
+  color: #212529; /* Dark text for contrast */
+  font-weight: bold;
+}
+
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+  background-color: #e0a800; /* Darker warning on hover */
+}
+
+.react-calendar__tile--active {
+  background-color: #007bff; /* Bootstrap primary color for selected */
+  color: white;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background-color: #0056b3; /* Darker primary on hover */
+}
+
+.react-calendar__tile--range {
+  background-color: #a7b8d3; /* Custom range color */
+  color: #212529;
+  border-radius: 0; /* Remove rounded corners for range */
+}
+
+.react-calendar__tile--rangeStart {
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+}
+
+.react-calendar__tile--rangeEnd {
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+
+.react-calendar__tile--rangeExtraStart,
+.react-calendar__tile--rangeExtraEnd {
+  opacity: 1; /* Keep full opacity for range ends */
+}
+
+/* Basic styling for scheduled events section */
+.scheduled-events {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .25rem;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    width: 100%; /* Ensure it takes full width of its container */
+    max-width: 800px; /* Match calendar width */
+    margin-left: auto; /* Center */
+    margin-right: auto; /* Center */
+}
+
+.scheduled-events h4 {
+    color: #343a40; /* Dark text */
+    margin-bottom: 1rem;
+}
+
+.scheduled-events ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.scheduled-events li {
+    padding: .75rem 0;
+    border-bottom: 1px solid #e9ecef; /* Light border */
+}
+
+.scheduled-events li:last-child {
+    border-bottom: none;
+}
+
+.outfit-suggestions-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .25rem;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    width: 100%;
+    max-width: 800px; /* Match calendar width */
+    margin-left: auto; /* Center */
+    margin-right: auto; /* Center */
 } 

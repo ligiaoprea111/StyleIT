@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import HomePage from "./components/HomePage/HomePage"; // Importă pagina HomePage
 import Dashboard from "./components/Dashboard/Dashboard"; // Pagină de dashboard
-import ProfilePage from "./components/ProfilePage/ProfilePage";
+import Profile from "./components/Profile/Profile";
 import Wardrobe from './components/Wardrobe/Wardrobe';
 import AddToWardrobe from './components/Wardrobe/AddToWardrobe';
 import Sidebar from './components/Sidebar/Sidebar';
@@ -21,7 +21,7 @@ const AppContent = () => {
       <Routes>
         <Route path="/" element={<HomePage />} /> {/* Ruta pentru pagina home */}
         <Route path="/dashboard" element={<Dashboard />} /> {/* Adaugă dashboard-ul */}
-        <Route path="/profile/:id" element={<ProfilePage />} />
+        <Route path="/profile/:id" element={<Profile />} />
         <Route path="/wardrobe" element={<Wardrobe />} />
         <Route path="/wardrobe/add" element={<AddToWardrobe />} />
         <Route path="/calendar" element={<CalendarPlanner />} />
