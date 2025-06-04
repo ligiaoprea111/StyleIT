@@ -2,6 +2,7 @@ import db from "../models/index.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import GeminiService from "../services/geminiService.js";
 
 // Configure multer for file upload
 const storage = multer.diskStorage({
@@ -88,4 +89,101 @@ export const createClothingItem = async (req, res) => {
       res.status(500).json({ error: "Failed to create clothing item" });
     }
   });
+};
+
+export const generateOutfit = async (req, res) => {
+  try {
+    const { userId, occasion, style, preferredColors, avoidItems, mustHave } = req.body;
+    if (!userId || !occasion) {
+      return res.status(400).json({ error: "Missing userId or occasion" });
+    }
+
+    // Fetch user's wardrobe
+    const wardrobe = await db.ClothingItem.findAll({ where: { userId } });
+    if (!wardrobe || wardrobe.length === 0) {
+      return res.status(400).json({ error: "No wardrobe items found for user" });
+    }
+
+    // TODO: Fetch real weather data. For now, stub it.
+    const weather = "20°C, sunny";
+
+    // Filter wardrobe for relevance (e.g., by season, occasion, style, tags)
+    let filteredWardrobe = wardrobe;
+    // Simple filtering: if summer, exclude jackets/coats/sweaters
+    if (occasion && occasion.toLowerCase().includes('summer')) {
+      filteredWardrobe = filteredWardrobe.filter(item => {
+        const lowerCat = (item.category || '').toLowerCase();
+        const lowerSub = (item.subCategory || '').toLowerCase();
+        return !(
+          lowerCat.includes('jacket') ||
+          lowerCat.includes('coat') ||
+          lowerCat.includes('sweater') ||
+          lowerSub.includes('jacket') ||
+          lowerSub.includes('coat') ||
+          lowerSub.includes('sweater')
+        );
+      });
+    }
+    // Optionally, filter by season field if present
+    if (filteredWardrobe.length > 0 && filteredWardrobe[0].season) {
+      filteredWardrobe = filteredWardrobe.filter(item => {
+        if (!item.season) return true;
+        if (occasion && occasion.toLowerCase().includes('summer')) {
+          return item.season.toLowerCase().includes('summer');
+        }
+        if (occasion && occasion.toLowerCase().includes('winter')) {
+          return item.season.toLowerCase().includes('winter');
+        }
+        return true;
+      });
+    }
+    // Build prompt for Gemini with id and imageUrl
+    const wardrobeList = filteredWardrobe.map(item =>
+      `- id: ${item.id}, name: ${item.name}, category: ${item.category}${item.subCategory ? ", subCategory: " + item.subCategory : ""}, color: ${item.color || "unknown"}, material: ${item.material || "unknown"}, imageUrl: ${item.imageUrl || "none"}`
+    ).join("\n");
+
+    const prompt = `The user needs an outfit for: ${occasion}.
+Weather: ${weather}.
+Preferred style: ${style || "no preference"}.
+Preferred colors: ${preferredColors || "no preference"}.
+Items to avoid: ${avoidItems || "none"}.
+Must-have item/type: ${mustHave || "none"}.
+
+Here is the user's wardrobe. Each item has an id and imageUrl. Only select items from this list. Do NOT invent new items or images. Only use the provided imageUrl for each item. Do not use placeholder images. If the list is short, pick the best combination. If the list is long, pick the most relevant items for the occasion, weather, and preferences:
+${wardrobeList}
+
+Respond ONLY with valid JSON in this format:
+{
+  "items": [
+    { "id": <id>, "name": <name>, "category": <category>, "subCategory": <subCategory>, "imageUrl": <imageUrl> },
+    ...
+  ],
+  "explanation": "<why you chose these items>"
+}`;
+
+    const geminiResponse = await GeminiService.generateText(prompt);
+    console.log('Gemini raw response:', geminiResponse);
+    let parsed;
+    try {
+      parsed = JSON.parse(geminiResponse);
+    } catch (e) {
+      // fallback: try to extract JSON from Gemini response
+      const match = geminiResponse.match(/\{[\s\S]*\}/);
+      if (match) {
+        try {
+          parsed = JSON.parse(match[0]);
+        } catch (err) {
+          console.error('Failed to parse extracted JSON:', match[0]);
+          return res.status(500).json({ error: 'Failed to parse Gemini response as JSON', raw: geminiResponse });
+        }
+      } else {
+        console.error('Failed to parse Gemini response:', geminiResponse);
+        return res.status(500).json({ error: 'Failed to parse Gemini response as JSON', raw: geminiResponse });
+      }
+    }
+    res.json(parsed);
+  } catch (error) {
+    console.error("Error generating outfit:", error);
+    res.status(500).json({ error: "Failed to generate outfit" });
+  }
 };
