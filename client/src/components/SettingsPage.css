@@ -1,0 +1,33 @@
+.settings-page-container {
+  padding: 2rem;
+  background: #f8f9fa; /* Light grey background */
+  min-height: 100vh;
+}
+
+.settings-page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #343a40; /* Dark grey color */
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  background-color: #e9ecef; /* Slightly darker grey for card headers */
+  font-weight: 600;
+}
+
+.card {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Add some spacing for form groups */
+.form-group.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+/* Style for placeholder buttons */
+.card-body .btn {
+    margin-right: 0.5rem; /* Space between buttons */
+} 

@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import Layout from './Layout/Layout';
+import OutfitSaveModal from './OutfitSaveModal/OutfitSaveModal';
 
 const AIAssistant = () => {
     const [activeTab, setActiveTab] = useState('outfit');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [response, setResponse] = useState('');
+    const [showSaveModal, setShowSaveModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     // Outfit recommendation state
     const [outfitParams, setOutfitParams] = useState({
@@ -100,6 +103,74 @@ const AIAssistant = () => {
             setError(err.response?.data?.error || 'Failed to get style advice');
         }
         setLoading(false);
+    };
+
+    const handleSaveOutfit = async (outfitName, outfitDate) => {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('token');
+
+        if (!userId || !token) {
+            setError('User not logged in.');
+            return;
+        }
+
+        if (!response || !response.items || response.items.length === 0) {
+            setError('No outfit items to save.');
+            return;
+        }
+
+        const itemIds = response.items.map(item => item.id);
+
+        try {
+            // First, save the outfit to the general outfits list
+            const saveOutfitResponse = await axios.post('/api/outfits', {
+                name: outfitName,
+                date: outfitDate || null,
+                itemIds: itemIds
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            console.log('Outfit saved successfully:', saveOutfitResponse.data);
+            
+            const savedOutfitId = saveOutfitResponse.data.id;
+
+            let schedulingSuccessful = true;
+
+            // If a date was provided, also schedule the outfit
+            if (outfitDate) {
+                try {
+                    await axios.post('/api/scheduled-outfits', {
+                        id_user: userId,
+                        id_outfit: savedOutfitId,
+                        scheduled_date: outfitDate
+                    }, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    console.log(`Outfit ${savedOutfitId} successfully scheduled for ${outfitDate}`);
+                } catch (scheduleError) {
+                    schedulingSuccessful = false;
+                    console.error('Error scheduling outfit:', scheduleError);
+                    setError('Outfit saved, but failed to schedule it for the selected date.');
+                }
+            }
+
+            // Only show success message if scheduling was successful or no date was provided
+            if (schedulingSuccessful) {
+                 setSuccessMessage(outfitDate ? `Outfit saved and scheduled for ${outfitDate}!` : 'Outfit saved successfully!');
+            }
+
+            setShowSaveModal(false);
+
+            // Clear messages after 3 seconds
+            setTimeout(() => {
+                setSuccessMessage('');
+                setError(''); // Also clear error message after a delay
+            }, 3000);
+
+        } catch (err) {
+            console.error('Error saving outfit:', err);
+            setError(err.response?.data?.error || 'Failed to save outfit.');
+        }
     };
 
     return (
@@ -197,6 +268,7 @@ const AIAssistant = () => {
                             <Card.Body>
                                 <h5 className="mb-3">Response</h5>
                                 {error && <Alert variant="danger">{error}</Alert>}
+                                {successMessage && <Alert variant="success">{successMessage}</Alert>}
                                 {activeTab === 'outfit' && response && typeof response === 'object' && response.items && response.explanation && (
                                     <div>
                                         <h6>Recommended Items:</h6>
@@ -209,10 +281,17 @@ const AIAssistant = () => {
                                             ))}
                                         </ul>
                                         <p><b>Explanation:</b> {response.explanation}</p>
+                                        <Button 
+                                            variant="success" 
+                                            onClick={() => setShowSaveModal(true)}
+                                            className="mt-3"
+                                        >
+                                            Save Outfit
+                                        </Button>
                                     </div>
                                 )}
-                                {(activeTab === 'outfit' && response && typeof response === 'string') ||
-                                 (activeTab === 'advice' && response) ? (
+                                
+                                {activeTab === 'advice' && response ? (
                                     <div className="response-content">
                                         {typeof response === 'string' ? response.split('\n').map((line, i) => {
                                             // Simple markdown-like formatting for bolding
@@ -227,6 +306,13 @@ const AIAssistant = () => {
                     </Col>
                 </Row>
             </Container>
+
+            <OutfitSaveModal
+                show={showSaveModal}
+                handleClose={() => setShowSaveModal(false)}
+                handleSave={handleSaveOutfit}
+                selectedItemsCount={response?.items?.length || 0}
+            />
         </Layout>
     );
 };
