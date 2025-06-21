@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import Layout from './Layout/Layout';
+import Layout from '../Layout/Layout';
 import './SettingsPage.css';
 
 const SettingsPage = () => {

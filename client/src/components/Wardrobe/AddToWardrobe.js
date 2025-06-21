@@ -149,10 +149,10 @@ const AddToWardrobe = () => {
           fileInputRef.current.value = '';
         }
         
-        // Redirect to wardrobe page after 2 seconds
+        // Redirect to wardrobe page after 5 seconds
         setTimeout(() => {
           navigate('/wardrobe');
-        }, 2000);
+        }, 5000);
       } else {
         const data = await response.json();
         setErrorMessage(data.message || 'Failed to add item to wardrobe');

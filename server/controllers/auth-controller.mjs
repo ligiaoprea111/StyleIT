@@ -3,36 +3,27 @@ import jwt from "jsonwebtoken";
 import db from "../models/index.js";
 const { User } = db;
 
-
-// Funcție pentru autentificare
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => { // Funcție pentru autentificare
   const { email, password } = req.body;
 
-  try {
-    // Verifică dacă utilizatorul există
+  try {     // Verifică dacă utilizatorul există
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Compară parola introdusă cu parola criptată din baza de date
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);  // Compară parola introdusă cu parola criptată din baza de date
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Generează un token JWT
-    const token = jwt.sign(
+    const token = jwt.sign(  // Generează un token JWT
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET, // Cheia secretă pentru token
       { expiresIn: '1h' } // Expiră după 1 oră
     );
-
-    // token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { algorithm: 'HS256', expiresIn: '1h' });
-//console.log("Generated JWT Token:", token);
-
 
     // Trimite token-ul ca răspuns
     res.json({ token, userId: user.id  });

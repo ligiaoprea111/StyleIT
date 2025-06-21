@@ -41,7 +41,7 @@ for (const file of files) {
   db[model.name] = model;
 }
 
-// Set up manual association: User hasOne Profile
+// User hasOne Profile
 if (db.User && db.Profile) {
   db.User.hasOne(db.Profile, { foreignKey: 'userId', onDelete: 'CASCADE' });
   db.Profile.belongsTo(db.User, { foreignKey: 'userId' });

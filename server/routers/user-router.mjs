@@ -1,6 +1,6 @@
 import express from "express";
-import { getUsers, createUser } from "../controllers/user-controller.mjs";  // Asigură-te că ai importat corect
-import { loginUser } from "../controllers/auth-controller.mjs";  // Importă loginUser din auth-controller.mjs
+import { getUsers, createUser } from "../controllers/user-controller.mjs";  
+import { loginUser } from "../controllers/auth-controller.mjs"; 
 import db from "../models/index.js";
 
 const router = express.Router();
@@ -22,7 +22,7 @@ router.get("/:id", async (req, res) => {
         console.log("GET /api/users/:id - primit cu ID =", req.params.id);
         console.log("User model definit?", typeof User);
       const user = await User.findByPk(req.params.id, {
-        attributes: ["id", "name", "email"] // sau doar 'name' dacă preferi
+        attributes: ["id", "name", "email"] 
       });
   
       if (!user) return res.status(404).json({ message: "User not found" });

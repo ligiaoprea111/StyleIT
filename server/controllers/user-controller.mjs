@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import User from "../models/user.js"; // Asigură-te că importi modelul corect
+import User from "../models/user.js"; 
 
 export const getUsers = async (req, res) => {
   try {
@@ -14,14 +14,12 @@ export const createUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
   try {
-    // Criptează parola înainte de a salva utilizatorul
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crează utilizatorul
     const newUser = await User.create({
       name,
       email,
-      password: hashedPassword, // Salvează parola criptată
+      password: hashedPassword, // Salvează parola criptată anterior
       role
     });
 

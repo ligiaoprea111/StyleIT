@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import db from "./models/index.js"; // 👈 import pentru sequelize + modele
+import db from "./models/index.js"; 
 import userRouter from "./routers/user-router.mjs";
 import authRouter from "./routers/auth-router.mjs";
 import stylePrefRoutes from "./routers/stylepreferences-router.js";
@@ -24,7 +24,6 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the public/images directory
 app.use('/images', express.static('public/images'));
 
 app.use("/api/users", userRouter);
@@ -40,10 +39,10 @@ app.get("/", (req, res) => {
   res.send("Serverul rulează!");
 });
 
-// 👇 pornim serverul după ce sincronizăm baza de date
+//pornirea server-ului dupa sincronizarea bazei de date
 const startServer = async () => {
   try {
-    await db.sequelize.sync(); // creează tabela Profile dacă nu există
+    await db.sequelize.sync(); // crearea tabela Profile dacă nu există
     app.listen(PORT, () => {
       console.log(`Serverul rulează pe portul ${PORT}`);
     });

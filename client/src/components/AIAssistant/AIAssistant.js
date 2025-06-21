@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
-import Layout from './Layout/Layout';
-import OutfitSaveModal from './OutfitSaveModal/OutfitSaveModal';
+import Layout from '../Layout/Layout';
+import OutfitSaveModal from '../OutfitSaveModal/OutfitSaveModal';
 
 const AIAssistant = () => {
     const [activeTab, setActiveTab] = useState('outfit');
