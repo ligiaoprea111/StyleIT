@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import db from "../models/index.js";
-const { User } = db;
+const { User, Profile } = db;
 
 export const loginUser = async (req, res) => { // Funcție pentru autentificare
   const { email, password } = req.body;
@@ -35,7 +35,7 @@ export const loginUser = async (req, res) => { // Funcție pentru autentificare
 
 // Funcție pentru înregistrare
 export const registerUser = async (req, res) => {
-  const { email, password, role, name } = req.body;
+  const { email, password, name } = req.body;
 
   try {
     // Verifică dacă utilizatorul există deja
@@ -52,8 +52,12 @@ export const registerUser = async (req, res) => {
     const newUser = await User.create({
       email,
       password: hashedPassword,
-      role,  // rolul utilizatorului (ex. 'user', 'admin', 'fashion_advisor')
-      name,  // numele utilizatorului
+      name,
+    });
+    
+    // Crearea unui profil gol pentru noul utilizator
+    await Profile.create({
+      userId: newUser.id,
     });
 
     // Răspuns la cererea de înregistrare

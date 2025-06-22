@@ -2,24 +2,79 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './StylePreferencesForm.css';
 
-const StylePreferencesForm = () => {
-  const [preferences, setPreferences] = useState({
-    sex_gender: '',
-    style_preference: [],
-    favorite_colors: [],
-    outfit_feel: [],
-    frequent_events: [],
-    dislikes: '',
-    inspirations: '',
-    body_shape: '',
-    height: '',
-    weight: ''
-  });
+const STYLE_MAP = {
+  'Casual chic': 'Casual',
+  'Classic': 'Classic',
+  'Minimalist': 'Minimalist',
+  'Bohemian': 'Bohemian',
+  'Sporty': 'Sporty',
+  'Formal': 'Formal',
+  'Streetwear': 'Streetwear',
+  'Trendy': 'Trendy',
+  'Business': 'Business',
+  // adaugă aici alte variante dacă ai nevoie
+};
+
+const COLOR_MAP = {
+  'lavender': 'Pastels',
+  'beige': 'Earth Tones',
+  'neon': 'Bright Colors',
+  'black & white': 'Black & White',
+  'neutrals': 'Neutrals',
+  // adaugă aici alte variante dacă ai nevoie
+};
+
+const normalizePreferences = (prefs = {}) => ({
+  ...prefs,
+  style_preference: Array.isArray(prefs.style_preference)
+    ? prefs.style_preference.map(val => STYLE_MAP[val] || val)
+    : (prefs.style_preference
+        ? prefs.style_preference.split(',').map(s => STYLE_MAP[s.trim()] || s.trim())
+        : []),
+  favorite_colors: Array.isArray(prefs.favorite_colors)
+    ? prefs.favorite_colors.map(val => COLOR_MAP[val] || val)
+    : (prefs.favorite_colors
+        ? prefs.favorite_colors.split(',').map(s => COLOR_MAP[s.trim().toLowerCase()] || s.trim())
+        : []),
+  outfit_feel: Array.isArray(prefs.outfit_feel)
+    ? prefs.outfit_feel
+    : (prefs.outfit_feel ? prefs.outfit_feel.split(',').map(s => s.trim()) : []),
+  frequent_events: Array.isArray(prefs.frequent_events)
+    ? prefs.frequent_events
+    : (prefs.frequent_events ? prefs.frequent_events.split(',').map(s => s.trim()) : []),
+  dislikes: prefs.dislikes || '',
+  inspirations: prefs.inspirations || '',
+  sex_gender: prefs.sex_gender || '',
+  body_shape: prefs.body_shape || '',
+  height: prefs.height || '',
+  weight: prefs.weight || ''
+});
+
+const StylePreferencesForm = ({ initialPreferences }) => {
+  console.log('initialPreferences', initialPreferences);
+  const [preferences, setPreferences] = useState(
+    initialPreferences ? normalizePreferences(initialPreferences) : {
+      sex_gender: '',
+      style_preference: [],
+      favorite_colors: [],
+      outfit_feel: [],
+      frequent_events: [],
+      dislikes: '',
+      inspirations: '',
+      body_shape: '',
+      height: '',
+      weight: ''
+    }
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (initialPreferences) {
+      setPreferences(normalizePreferences(initialPreferences));
+      return;
+    }
     const fetchPreferences = async () => {
       try {
         const response = await axios.get('/api/style-preferences', {
@@ -27,15 +82,14 @@ const StylePreferencesForm = () => {
             Authorization: `Bearer ${localStorage.getItem('jwt')}`
           }
         });
-        setPreferences(response.data);
+        setPreferences(normalizePreferences(response.data));
       } catch (err) {
         console.error('Error fetching preferences:', err);
         setError('Failed to load preferences.');
       }
     };
-
     fetchPreferences();
-  }, []);
+  }, [initialPreferences]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;

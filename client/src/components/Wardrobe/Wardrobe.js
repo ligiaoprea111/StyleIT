@@ -239,43 +239,42 @@ const Wardrobe = () => {
             <FaTshirt size={36} className="me-2" />
             <h2 className="mb-0">Your Digital Wardrobe</h2>
           </div>
-          {/* Add button to toggle outfit selection mode */}
-          {!isSelectingForOutfit ? (
-            <Button
-              variant="secondary"
-              className="d-flex align-items-center gap-2"
-              onClick={toggleOutfitSelection}
-            >
-              Create New Outfit
-            </Button>
-          ) : (
-            <div className="d-flex align-items-center gap-2">
-              {/* Show Save/Update button based on editing state */}
-              <Button
-                variant="success"
-                onClick={handleOpenSaveModal}
-                disabled={selectedOutfitItems.length === 0}
-              >
-                {editingOutfitId ? 'Update Outfit' : 'Save Outfit'} ({selectedOutfitItems.length})
-              </Button>
-              <Button
-                variant="danger"
-                onClick={toggleOutfitSelection} // This now handles redirect on cancel when editing
-              >
-                Cancel
-              </Button>
-            </div>
-          )}
-          {/* Original Add Item Button (conditionally render) */}
-          {!isSelectingForOutfit && (
-            <Button
-              variant="primary"
-              className="d-flex align-items-center gap-2"
-              onClick={() => navigate('/wardrobe/add')}
-            >
-              <FaPlus /> Add Item
-            </Button>
-          )}
+          <div className="wardrobe-header-actions">
+            {!isSelectingForOutfit && (
+              <>
+                <Button
+                  className="btn-create-outfit d-flex align-items-center gap-2"
+                  onClick={toggleOutfitSelection}
+                >
+                  Create New Outfit
+                </Button>
+                <Button
+                  variant="primary"
+                  className="d-flex align-items-center gap-2"
+                  onClick={() => navigate('/wardrobe/add')}
+                >
+                  <FaPlus /> Add Item
+                </Button>
+              </>
+            )}
+            {isSelectingForOutfit && (
+              <div className="d-flex align-items-center gap-2">
+                <Button
+                  variant="success"
+                  onClick={handleOpenSaveModal}
+                  disabled={selectedOutfitItems.length === 0}
+                >
+                  {editingOutfitId ? 'Update Outfit' : 'Save Outfit'} ({selectedOutfitItems.length})
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={toggleOutfitSelection}
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
         <Tab.Container activeKey={activeTab} onSelect={(k) => { setActiveTab(k); setActiveSubcategory(null); }}>
           <Nav variant="tabs" className="mb-3">

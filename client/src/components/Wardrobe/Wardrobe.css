@@ -1,5 +1,5 @@
 .wardrobe-container {
-  background-color: #fff9ed;
+  background-color: #fff;
   min-height: 100vh;
   padding: 2rem;
   width: 100%;
@@ -30,14 +30,19 @@
 }
 
 .card {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  border-radius: 12px;
-  transition: box-shadow 0.2s, border 0.2s ease-in-out;
-  border: 1px solid transparent;
+  background: #f3fbfd;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.08);
+  border: 2px solid #33044a;
+  color: #33044a;
+  transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
 }
 
 .card:hover {
-  box-shadow: 0 4px 16px rgba(108,99,255,0.15);
+  border: 2px solid #e80459;
+  box-shadow: 0 6px 24px rgba(232,4,89,0.15);
+  transform: translateY(-4px) scale(1.03);
+  cursor: pointer;
 }
 
 .card-img-top {
@@ -47,9 +52,13 @@
   border-top-right-radius: 12px;
 }
 
-.card-title {
-  font-size: 1.1rem;
-  font-weight: 600;
+.card-title, .wardrobe-title {
+  color: #e80459;
+  font-weight: 700;
+}
+
+.card-text {
+  color: #33044a;
 }
 
 .alert-info {
@@ -63,17 +72,17 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  background: linear-gradient(90deg, #33044a 0%, #e80459 100%) !important;
   border: none;
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+  color: #fff !important;
+  font-weight: 600;
+  transition: background 0.3s, box-shadow 0.2s;
 }
 
-.btn-primary:hover {
-  background: linear-gradient(135deg, #357abd 0%, #2a5f94 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(90deg, #e80459 0%, #33044a 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.15);
 }
 
 .gap-2 {
@@ -87,6 +96,45 @@
 
 .wardrobe-item-selected:hover {
   box-shadow: 0 4px 16px rgba(108,99,255,0.15); /* Keep the hover shadow */
+}
+
+.nav-tabs .nav-link, .nav-pills .nav-link {
+  color: #33044a !important;
+  font-weight: 600;
+  background: #d7f3f7;
+  border: 1px solid #d7f3f7;
+  border-radius: 8px 8px 0 0;
+  margin-right: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-tabs .nav-link.active, .nav-pills .nav-link.active {
+  background: #33044a !important;
+  color: #d7f3f7 !important;
+  border-color: #33044a !important;
+}
+
+/* Stil pentru gruparea butoanelor din header */
+.wardrobe-header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Stil pentru butonul Create New Outfit ca Add Item */
+.btn-create-outfit {
+  background: linear-gradient(90deg, #33044a 0%, #e80459 100%) !important;
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  transition: background 0.3s, box-shadow 0.2s;
+  margin-left: auto;
+}
+
+.btn-create-outfit:hover, .btn-create-outfit:focus {
+  background: linear-gradient(90deg, #e80459 0%, #33044a 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.15);
 }
 
 @media (max-width: 576px) {

@@ -4,7 +4,7 @@
   position: fixed;
   left: 0;
   top: 0;
-  background-color: #ffffff;
+  background-color: #33044a;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   padding: 1.5rem 1rem;
   z-index: 1000;
@@ -34,7 +34,7 @@
   position: absolute;
   right: -12px;
   top: 20px;
-  background: #6c63ff;
+  background: #d7f3f7;
   border: none;
   width: 24px;
   height: 24px;
@@ -43,13 +43,14 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: white;
+  color: #33044a;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
 .sidebar-toggle:hover {
-  background: #5a52d5;
+  background: #b2e0ea;
+  color: #33044a;
 }
 
 .toggle-icon {
@@ -61,13 +62,25 @@
 }
 
 .sidebar-header {
-  padding: 0 1rem 1.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 1rem 1.5rem 0.1rem;
   border-bottom: 1px solid #eee;
   margin-bottom: 1.5rem;
 }
 
+.sidebar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.08);
+  margin-left: 0;
+}
+
 .sidebar-header h3 {
-  color: #6c63ff;
+  color: #fff;
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
@@ -78,25 +91,22 @@
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
-  color: #666;
+  color: #d7f3f7 !important;
   border-radius: 8px;
   margin-bottom: 0.5rem;
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
-.nav-link:hover {
-  background-color: #f8f9fa;
-  color: #6c63ff;
-}
-
-.nav-link.active {
-  background-color: #6c63ff;
-  color: white;
+.nav-link.active, .nav-link:hover {
+  color: #e80459 !important;
+  background: rgba(232,4,89,0.1) !important;
 }
 
 .nav-icon {
   margin-right: 0.75rem;
   font-size: 1.2rem;
+  color: inherit !important;
   transition: all 0.3s ease;
 }
 
@@ -111,7 +121,6 @@
   margin-left: 250px;
   padding: 2rem;
   min-height: 100vh;
-  background-color: #fff9ed;
   transition: margin-left 0.3s ease;
   width: calc(100% - 250px);
   position: relative;
@@ -144,4 +153,49 @@
 
 .logout-link .nav-icon {
   color: #dc3545;
+}
+
+.card-img-top {
+  border-top-left-radius: 16px !important;
+  border-top-right-radius: 16px !important;
+  background: #f3fbfd !important; /* dacă imaginea are zone transparente */
+}
+
+.glass-right {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.glass-right svg {
+  width: 80px;
+  height: 80px;
+}
+
+.glass-right svg ellipse {
+  fill: #2fbad1;
+}
+
+.glass-right svg rect {
+  fill: #fff;
+  stroke: #33044a;
+  stroke-width: 3px;
+}
+
+.glass-right svg circle {
+  fill: #e80459;
+}
+
+.glass-right svg line {
+  stroke: #33044a;
+  stroke-width: 2px;
+}
+
+.glass-right div {
+  color: #e80459;
+  font-weight: 700;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 8px;
 } 

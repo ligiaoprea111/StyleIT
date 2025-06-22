@@ -1,60 +1,61 @@
-import React, { useState, useEffect } from "react";
-import LoginForm from "../LoginForm/LoginForm"; // Importă componenta LoginForm pentru formularul de login
-import RegisterForm from "../RegisterForm/RegisterForm"; // Importă formularul de înregistrare
-import './HomePage.css'; // Asigură-te că ai stilurile pentru această pagină
-
+import React, { useState } from 'react';
+import './HomePage.css';
+import RegisterForm from '../RegisterForm/RegisterForm';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); // State pentru a controla vizibilitatea modalului
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // State pentru a controla vizibilitatea modalului de register
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const navigate = useNavigate();
 
-  const openLoginModal = () => {
-    console.log("Login!");
-    setIsLoginModalOpen(true);
-    //console.log(isLoginModalOpen); // Deschide modalul
+  const openRegisterModal = () => setIsRegisterModalOpen(true);
+  const closeRegisterModal = () => setIsRegisterModalOpen(false);
+
+  const handleHomepageLogin = async (e) => {
+    e.preventDefault();
+    setLoginError("");
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/login", {
+        email: loginEmail,
+        password: loginPassword,
+      });
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data.userId);
+      navigate("/dashboard");
+    } catch (err) {
+      setLoginError("Incorrect email or password");
+    }
   };
-
-  const closeLoginModal = () => {
-    setIsLoginModalOpen(false);
-   // console.log(isLoginModalOpen); // Închide modalul
-  };
-
-  const openRegisterModal = () => {
-    console.log("Sign up!");
-    setIsRegisterModalOpen(true); // Deschide modalul de register
-  };
-
-  const closeRegisterModal = () => {
-    setIsRegisterModalOpen(false); // Închide modalul de register
-  };
-
-  // useEffect pentru a urmări modificarea stării modalului
-  useEffect(() => {
-    console.log("isLoginModalOpen:", isLoginModalOpen); // Verifică starea actuală a modalului
-  }, [isLoginModalOpen]); // Aceasta se va apela de fiecare dată când se schimbă valoarea isLoginModalOpen
 
   return (
-    <div className="homepage-container">
-      <div className="background-image">
-        <div className="content">
-          <div className="buttons">
-            <button className="sign-in-button" type="submit" onClick={openLoginModal}>Sign In</button>
-            <button className="sign-up-button" type="submit"onClick={openRegisterModal}>Sign Up</button> {/* Adaugă funcționalitate pentru acest buton dacă vrei */}
+    <div className="homepage-bg">
+      <div className="glass-card single">
+        <div className="glass-left full">
+          <div className="glass-title gradient-text">StyleIT</div>
+          <div className="glass-subtext" style={{ color: '#e80459', fontWeight: 700, fontSize: 20, marginBottom: 32 }}>
+            Your interactive digital wardrobe
+          </div>
+          <form className="glass-form" onSubmit={handleHomepageLogin}>
+            <label htmlFor="username">Email</label>
+            <input id="username" type="email" placeholder="Email" required autoComplete="username" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} />
+            <label htmlFor="password">Password</label>
+            <input id="password" type="password" placeholder="Password" required autoComplete="current-password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} />
+            {loginError && <div className="error-message" style={{marginBottom:8}}>{loginError}</div>}
+            <button type="submit">Sign In</button>
+          </form>
+          <div className="glass-subtext">
+            Don't have an account?{' '}
+            <span style={{ color: '#e80459', cursor: 'pointer', fontWeight: 600 }} onClick={openRegisterModal}>
+              Create account
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Modalul de login */}
-      {isLoginModalOpen && (
-        <div className="login-modal">
-          <div className="modal-overlay" onClick={closeLoginModal}></div>
-          <div className="modal-content">
-            <LoginForm closeModal={closeLoginModal} />
-          </div>
-        </div>
-      )}
-
-      {/* Modalul de register */}
+      {/* Register Modal */}
       {isRegisterModalOpen && (
         <div className="register-modal">
           <div className="modal-overlay" onClick={closeRegisterModal}></div>
@@ -66,7 +67,5 @@ const HomePage = () => {
     </div>
   );
 };
-
-
 
 export default HomePage;

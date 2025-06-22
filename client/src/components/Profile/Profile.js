@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, Alert } from 'react-bootstrap';
-import { FaUser, FaEdit, FaPalette, FaMapMarkerAlt, FaBirthdayCake } from 'react-icons/fa';
+import { FaEdit, FaMapMarkerAlt, FaBirthdayCake } from 'react-icons/fa';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Profile.css';
 import Layout from '../Layout/Layout';
+import StylePreferencesForm from '../StylePreferencesForm/StylePreferencesForm';
 
 const Profile = () => {
   const { id } = useParams();
@@ -18,9 +19,9 @@ const Profile = () => {
   const [stylePreferences, setStylePreferences] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(null);
-  const [styleCategory, setStyleCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditingStyle, setIsEditingStyle] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -54,7 +55,6 @@ const Profile = () => {
           if (!token) {
             console.error('Profile: JWT token not found for fetching style preferences.');
             setStylePreferences(null);
-            setStyleCategory('Not specified');
             // Optionally set an error message for the user
             // setError('Authentication token missing. Cannot load style preferences.');
           } else {
@@ -64,13 +64,11 @@ const Profile = () => {
               }
             });
             setStylePreferences(preferencesResponse.data);
-            determineStyleCategory(preferencesResponse.data);
           }
         } catch (prefError) {
             if (prefError.response && prefError.response.status === 404) {
                 console.log('Profile: Style preferences not found for user ', currentUserId);
                 setStylePreferences(null);
-                setStyleCategory('Not specified');
             } else {
                  console.error(`Profile: Error fetching style preferences for user ${currentUserId}:`, prefError);
                  setError('Failed to fetch style preferences.');
@@ -96,28 +94,6 @@ const Profile = () => {
     fetchUserData();
   }, [currentUserId, navigate, id, storedUserId]);
 
-  const determineStyleCategory = (preferences) => {
-    if (!preferences) {
-        setStyleCategory('Not specified');
-        return;
-    }
-
-    const stylePref = preferences.style_preference?.toLowerCase();
-    const outfitFeel = preferences.outfit_feel?.toLowerCase();
-
-    if (stylePref?.includes('minimal') || outfitFeel?.includes('minimal')) {
-      setStyleCategory('Minimalist');
-    } else if (stylePref?.includes('classic') || outfitFeel?.includes('elegant')) {
-      setStyleCategory('Classic');
-    } else if (stylePref?.includes('casual') || outfitFeel?.includes('comfortable')) {
-      setStyleCategory('Casual');
-    } else if (stylePref?.includes('bohemian') || outfitFeel?.includes('free')) {
-      setStyleCategory('Bohemian');
-    } else {
-      setStyleCategory('Eclectic');
-    }
-  };
-
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -130,8 +106,29 @@ const Profile = () => {
     }
 
     try {
-      console.log(`Profile: Attempting to update profile for user with ID: ${id} at /api/profile/${id}`);
-      await axios.put(`/api/profile/${id}`, editedProfile);
+      let dataToSend;
+      let config = {};
+      // Dacă poza de profil e un fișier, trimite FormData
+      if (editedProfile.profilePicture instanceof File) {
+        dataToSend = new FormData();
+        dataToSend.append('description', editedProfile.description || '');
+        dataToSend.append('location', editedProfile.location || '');
+        dataToSend.append('birthday', editedProfile.birthday || '');
+        dataToSend.append('profilePicture', editedProfile.profilePicture);
+        dataToSend.append('email', editedProfile.email || '');
+        dataToSend.append('name', editedProfile.name || '');
+        config.headers = { 'Content-Type': 'multipart/form-data' };
+      } else {
+        dataToSend = {
+          description: editedProfile.description,
+          location: editedProfile.location,
+          birthday: editedProfile.birthday,
+          profilePicture: editedProfile.profilePicture,
+          email: editedProfile.email,
+          name: editedProfile.name
+        };
+      }
+      await axios.put(`/api/profile/${id}`, dataToSend, config);
       setProfile(editedProfile);
       setIsEditing(false);
     } catch (error) {
@@ -169,148 +166,93 @@ const Profile = () => {
   return (
     <Layout>
       <Container className="profile-container">
-        <Row className="justify-content-center">
-          <Col md={8}>
-            <Card className="profile-card">
+        <Row className="justify-content-center g-4">
+          <Col md={10}>
+            {/* CARD 1: Informații de bază */}
+            <Card className="profile-card mb-4">
               <Card.Body>
-                <div className="profile-header">
-                  <div className="profile-avatar">
-                    {profile.profilePicture ? (
-                      <img src={profile.profilePicture} alt="Profile" />
+                <div className="profile-header-new">
+                  <div className="profile-main-info">
+                    {isEditing ? (
+                      <>
+                        <Form.Group className="mb-2">
+                          <Form.Label>Name</Form.Label>
+                          <Form.Control type="text" name="name" value={editedProfile.name || ''} onChange={handleInputChange} />
+                        </Form.Group>
+                        <Form.Group className="mb-2">
+                          <Form.Label>Email</Form.Label>
+                          <Form.Control type="email" name="email" value={editedProfile.email || ''} onChange={handleInputChange} />
+                        </Form.Group>
+                        <Form.Group className="mb-2">
+                          <Form.Label>Location</Form.Label>
+                          <Form.Control type="text" name="location" value={editedProfile.location || ''} onChange={handleInputChange} />
+                        </Form.Group>
+                        <Form.Group className="mb-2">
+                          <Form.Label>Birthday</Form.Label>
+                          <Form.Control type="date" name="birthday" value={editedProfile.birthday || ''} onChange={handleInputChange} />
+                        </Form.Group>
+                        <Form.Group className="mb-2">
+                          <Form.Label>Description</Form.Label>
+                          <Form.Control as="textarea" rows={2} name="description" value={editedProfile.description || ''} onChange={handleInputChange} />
+                        </Form.Group>
+                      </>
                     ) : (
-                      <FaUser size={64} />
+                      <>
+                        <h2>{user.name}</h2>
+                        <p className="text-muted">{user.email}</p>
+                        <div className="detail-item" style={{ justifyContent: 'center' }}><FaMapMarkerAlt className="me-2" />{profile.location || 'Location not specified'}</div>
+                        <div className="detail-item" style={{ justifyContent: 'center' }}><FaBirthdayCake className="me-2" />{profile.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Birthday not specified'}</div>
+                        <div className="description mt-2">{profile.description || 'No description provided.'}</div>
+                      </>
                     )}
-                  </div>
-                  <div className="profile-info">
-                    <h2>{user.name}</h2>
-                    <p className="text-muted">{user.email}</p>
-                    <div className="style-category">
-                      <FaPalette className="me-2" />
-                      <span>Style Category: {styleCategory}</span>
+                    <div className="d-flex gap-2 mt-3 justify-content-center">
+                      {isEditing ? (
+                        <>
+                          <Button variant="primary" size="sm" onClick={handleSave}>Save</Button>
+                          <Button variant="secondary" size="sm" onClick={handleCancel}>Cancel</Button>
+                        </>
+                      ) : (
+                        <Button variant="outline-primary" size="sm" onClick={handleEdit}><FaEdit className="me-2" />Edit Profile</Button>
+                      )}
                     </div>
                   </div>
                 </div>
+              </Card.Body>
+            </Card>
 
-                <div className="profile-details mt-4">
-                  <Row>
-                    <Col md={6}>
-                      <div className="detail-item">
-                        <FaMapMarkerAlt className="me-2" />
-                        <span>Location: {profile.location || 'Not specified'}</span>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className="detail-item">
-                        <FaBirthdayCake className="me-2" />
-                        <span>Birthday: {profile.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Not specified'}</span>
-                      </div>
-                    </Col>
-                  </Row>
-
-                  {isEditing ? (
-                    <Form className="mt-4">
-                      <Form.Group className="mb-3">
-                        <Form.Label>Description</Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          rows={3}
-                          name="description"
-                          value={editedProfile.description || ''}
-                          onChange={handleInputChange}
-                        />
-                      </Form.Group>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Location</Form.Label>
-                        <Form.Control
-                          type="text"
-                          name="location"
-                          value={editedProfile.location || ''}
-                          onChange={handleInputChange}
-                        />
-                      </Form.Group>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Birthday</Form.Label>
-                        <Form.Control
-                          type="date"
-                          name="birthday"
-                          value={editedProfile.birthday || ''}
-                          onChange={handleInputChange}
-                        />
-                      </Form.Group>
-                      <div className="d-flex gap-2">
-                        <Button variant="primary" onClick={handleSave}>Save</Button>
-                        <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
-                      </div>
-                    </Form>
+            {/* CARD 2: Preferințe de stil */}
+            <Card className="style-preferences-card">
+              <Card.Body>
+                <div className="d-flex align-items-center justify-content-between mb-3">
+                  <h4 className="mb-0">Style Preferences</h4>
+                  {!isEditingStyle ? (
+                    <Button variant="outline-primary" size="sm" onClick={() => setIsEditingStyle(true)}><FaEdit className="me-2" />Edit</Button>
                   ) : (
-                    <>
-                      <div className="description mt-4">
-                        <h4>About Me</h4>
-                        <p>{profile.description || 'No description provided.'}</p>
-                      </div>
-                      <Button variant="outline-primary" className="mt-3" onClick={handleEdit}>
-                        <FaEdit className="me-2" />
-                        Edit Profile
-                      </Button>
-                    </>
+                    <div className="d-flex gap-2">
+                      <Button variant="primary" size="sm" onClick={() => setIsEditingStyle(false)}>Save</Button>
+                      <Button variant="secondary" size="sm" onClick={() => setIsEditingStyle(false)}>Cancel</Button>
+                    </div>
                   )}
                 </div>
-
-                {stylePreferences && (
-                  <div className="style-preferences mt-4">
-                    <h4>Style Preferences</h4>
-                    <Row>
-                      <Col md={6}>
-                        <div className="preference-item">
-                          <strong>Style Preference:</strong>
-                          <p>{stylePreferences.style_preference || 'Not specified'}</p>
-                        </div>
-                         <div className="preference-item">
-                          <strong>Outfit Feel:</strong>
-                          <p>{stylePreferences.outfit_feel || 'Not specified'}</p>
-                        </div>
-                         <div className="preference-item">
-                          <strong>Body Shape:</strong>
-                          <p>{stylePreferences.body_shape || 'Not specified'}</p>
-                        </div>
-                         <div className="preference-item">
-                          <strong>Favorite Items:</strong>
-                          <p>{stylePreferences.favorite_items || 'Not specified'}</p>
-                        </div>
-                         <div className="preference-item">
-                          <strong>Favorite Colors:</strong>
-                          <p>{stylePreferences.favorite_colors || 'Not specified'}</p>
-                        </div>
-                      </Col>
-                      <Col md={6}>
-                        <div className="preference-item">
-                          <strong>Preferred Materials:</strong>
-                          <p>{stylePreferences.preferred_materials || 'Not specified'}</p>
-                        </div>
-                        <div className="preference-item">
-                          <strong>Frequent Events:</strong>
-                          <p>{stylePreferences.frequent_events || 'Not specified'}</p>
-                        </div>
-                        <div className="preference-item">
-                          <strong>Preferred Accessories:</strong>
-                          <p>{stylePreferences.preferred_accessories || 'Not specified'}</p>
-                        </div>
-                         <div className="preference-item">
-                          <strong>Avoided Outfits:</strong>
-                          <p>{stylePreferences.avoided_outfits || 'Not specified'}</p>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
+                {isEditingStyle ? (
+                  <StylePreferencesForm key={isEditingStyle ? JSON.stringify(stylePreferences) : 'view'} initialPreferences={stylePreferences} />
+                ) : (
+                  <Row>
+                    <Col md={6}>
+                      <div className="preference-item"><strong>Style Preference:</strong><p>{stylePreferences?.style_preference || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Outfit Feel:</strong><p>{stylePreferences?.outfit_feel || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Body Shape:</strong><p>{stylePreferences?.body_shape || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Favorite Items:</strong><p>{stylePreferences?.favorite_items || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Favorite Colors:</strong><p>{stylePreferences?.favorite_colors || 'Not specified'}</p></div>
+                    </Col>
+                    <Col md={6}>
+                      <div className="preference-item"><strong>Preferred Materials:</strong><p>{stylePreferences?.preferred_materials || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Frequent Events:</strong><p>{stylePreferences?.frequent_events || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Preferred Accessories:</strong><p>{stylePreferences?.preferred_accessories || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Avoided Outfits:</strong><p>{stylePreferences?.avoided_outfits || 'Not specified'}</p></div>
+                    </Col>
+                  </Row>
                 )}
-
-                 {!stylePreferences && !isEditing && user && profile && (
-                    <div className="style-preferences mt-4">
-                       <h4>Style Preferences</h4>
-                       <Alert variant="info">Please complete your style preferences form to see this section and get a style category.</Alert>
-                    </div>
-                 )}
-
               </Card.Body>
             </Card>
           </Col>

@@ -1,7 +1,17 @@
 .card {
-  border: none;
-  border-radius: 15px;
-  overflow: hidden;
+  background: #f3fbfd !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.08) !important;
+  border: 2px solid #33044a !important;
+  color: #33044a !important;
+  transition: box-shadow 0.2s, border 0.2s, transform 0.2s !important;
+}
+
+.card:hover {
+  border: 2px solid #e80459 !important;
+  box-shadow: 0 6px 24px rgba(232,4,89,0.15) !important;
+  transform: translateY(-4px) scale(1.03) !important;
+  cursor: pointer !important;
 }
 
 .card-header {

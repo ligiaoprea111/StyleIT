@@ -20,7 +20,8 @@ export default (sequelize, DataTypes) => {
     },
     role: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      defaultValue: "fashion_explorer"
     },
     createdAt: {
       type: DataTypes.DATE,

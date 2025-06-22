@@ -37,6 +37,7 @@ const Sidebar = () => {
         <FaChevronLeft className={`toggle-icon ${isCollapsed ? 'rotated' : ''}`} />
       </button>
       <div className="sidebar-header">
+        <img src={process.env.PUBLIC_URL + '/logo_final.png'} alt="StyleIT Logo" className="sidebar-logo" />
         <h3>StyleIT</h3>
       </div>
       <Nav className="flex-column">

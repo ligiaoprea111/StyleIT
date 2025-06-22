@@ -31,14 +31,13 @@
    opacity: 1; /* Keep visible on hover */
 }
 
-.clothing-item-card {
-  border: 1px solid #dee2e6; /* Default border */
-  transition: border-color 0.2s ease-in-out;
-  /* Add some padding and rounded corners to the main outfit card */
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add subtle shadow */
-  margin-bottom: 15px; /* Space between cards */
+.clothing-item-card, .card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(51,4,74,0.08);
+  border: 2px solid #d7f3f7;
+  color: #33044a;
+  transition: box-shadow 0.2s, border 0.2s;
 }
 
 .clothing-item-card.selected {
@@ -86,4 +85,27 @@
 .outfit-item .card-text {
      font-size: 0.9em;
      margin-bottom: 0;
+}
+
+.card-title {
+  color: #e80459;
+  font-weight: 700;
+}
+
+.card-text, .outfit-details-expanded h6, .outfit-item .card-title {
+  color: #33044a;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #33044a 0%, #e80459 100%) !important;
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  transition: background 0.3s, box-shadow 0.2s;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(90deg, #e80459 0%, #33044a 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.15);
 } 

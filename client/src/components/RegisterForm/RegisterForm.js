@@ -3,46 +3,40 @@ import axios from "axios";
 import './RegisterForm.css';
 
 const RegisterForm = ({ closeModal }) => {
-  const [name, setName] = useState(""); // Pentru numele utilizatorului
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("fashion_explorer"); // Setează rolul implicit
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState(""); // State pentru mesajul de succes
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
-      setError("Parolele nu corespund!");
+      setError("Passwords do not match!");
+      setSuccessMessage("");
       return;
     }
-
     try {
       await axios.post("http://localhost:5000/api/auth/register", {
         name,
         email,
-        password,
-        role,
+        password
       });
-
-      // Setează mesajul de succes
-      setSuccessMessage("Inregistrare efectuata cu succes!");
-      setError(""); // Resetează eroarea, dacă există
-      // Poți închide modalul după succes, dacă vrei
+      setSuccessMessage("Registration successful! You can now sign in.");
+      setError("");
       setTimeout(() => {
         closeModal();
-      }, 3000); // Închide modalul după 3 secunde (timp pentru a vedea mesajul)
+      }, 2500);
     } catch (err) {
-      setError("Email-ul este deja folosit sau altă eroare");
-      setSuccessMessage(""); // Resetează mesajul de succes în caz de eroare
+      setError("Email is already in use or another error occurred.");
+      setSuccessMessage("");
     }
   };
 
   return (
     <div className="register-form">
-      <h2>Sign Up</h2>
+      <h2>Create Account</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label className="label">Name</label>
@@ -51,6 +45,7 @@ const RegisterForm = ({ closeModal }) => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            placeholder="Your name"
           />
         </div>
         <div>
@@ -60,6 +55,7 @@ const RegisterForm = ({ closeModal }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            placeholder="Email"
           />
         </div>
         <div>
@@ -69,6 +65,7 @@ const RegisterForm = ({ closeModal }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            placeholder="Password"
           />
         </div>
         <div>
@@ -78,22 +75,16 @@ const RegisterForm = ({ closeModal }) => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            placeholder="Confirm Password"
           />
         </div>
-
-        {/* Câmpul pentru rolul utilizatorului */}
-        <div>
-          <label className="label">Role</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)} required>
-            <option value="fashion_explorer">Fashion Explorer</option>
-            <option value="fashion_advisor">Fashion Advisor</option>
-          </select>
-        </div>
         {error && <p className="error-message">{error}</p>}
-        {successMessage && <p className="success-message">{successMessage}</p>} {/* Afișează mesajul de succes */}
-        <button type="submit" className="sign-up-button">Sign Up</button>
+        {successMessage && <p className="success-message">{successMessage}</p>}
+        <div className="button-container">
+          <button type="submit" className="sign-in-button">Sign Up</button>
+          <button type="button" className="cancel-button" onClick={closeModal}>Cancel</button>
+        </div>
       </form>
-      <button type="button" className="cancel-button" onClick={closeModal}>Cancel</button>
     </div>
   );
 };

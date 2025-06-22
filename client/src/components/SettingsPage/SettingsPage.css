@@ -17,9 +17,37 @@
 }
 
 .card {
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(51,4,74,0.08);
+  border: 2px solid #d7f3f7;
+  color: #33044a;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.card-header, .settings-page-title {
+  color: #e80459;
+  font-weight: 700;
+  background: none;
+  border-bottom: 2px solid #d7f3f7;
+}
+
+.card-body, .form-label, .card-text {
+  color: #33044a;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #33044a 0%, #e80459 100%) !important;
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  transition: background 0.3s, box-shadow 0.2s;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(90deg, #e80459 0%, #33044a 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.15);
 }
 
 /* Add some spacing for form groups */

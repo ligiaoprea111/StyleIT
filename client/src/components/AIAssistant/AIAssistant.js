@@ -201,7 +201,7 @@ const AIAssistant = () => {
 
                 <Row>
                     <Col md={6}>
-                        <Card>
+                        <Card className="ai-card">
                             <Card.Body>
                                 {activeTab === 'outfit' && (
                                     <Form onSubmit={handleOutfitSubmit}>
@@ -264,7 +264,7 @@ const AIAssistant = () => {
                     </Col>
 
                     <Col md={6}>
-                        <Card>
+                        <Card className="ai-card">
                             <Card.Body>
                                 <h5 className="mb-3">Response</h5>
                                 {error && <Alert variant="danger">{error}</Alert>}

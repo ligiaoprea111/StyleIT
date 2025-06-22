@@ -330,3 +330,53 @@ button.header-link:hover::after {
   box-shadow: 0 6px 18px rgba(108, 99, 255, 0.15), 0 1.5px 6px rgba(0,0,0,0.07);
   transform: translateY(-2px) scale(1.03);
 }
+
+.dashboard-card, .article-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(51,4,74,0.08);
+  border: 2px solid #d7f3f7;
+  color: #33044a;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.dashboard-title, .fashion-articles h3, .weather h3 {
+  color: #33044a;
+  font-weight: 700;
+  border-bottom: 2px solid #d7f3f7;
+  padding-bottom: 0.5rem;
+}
+
+.card-title {
+  color: #e80459;
+  font-weight: 700;
+}
+
+.icon-container {
+  background: #d7f3f7;
+  color: #33044a;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #33044a 0%, #e80459 100%) !important;
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  transition: background 0.3s, box-shadow 0.2s;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(90deg, #e80459 0%, #33044a 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.15);
+}
+
+.card-text, .article-desc {
+  color: #33044a;
+}

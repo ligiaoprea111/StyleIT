@@ -5,9 +5,36 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #d7f3f7;
+  color: #33044a !important;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Stiluri identitate vizuală StyleIT */
+.btn-primary {
+  background: linear-gradient(90deg, #33044a 0%, #e80459 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  transition: background 0.3s, box-shadow 0.2s;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(90deg, #e80459 0%, #33044a 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(51,4,74,0.15);
+}
+
+.section-title, h2, h3 {
+  color: #33044a;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.section-title-accent {
+  color: #e80459;
 }

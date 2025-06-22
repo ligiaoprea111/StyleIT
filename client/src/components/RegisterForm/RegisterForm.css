@@ -1,77 +1,106 @@
-/* Stiluri pentru formularul de înregistrare din modal */
+/* Fără reguli CSS goale, doar stiluri utile */
+
 .register-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Distanță între câmpuri */
-    width: 100%;
-    max-width: 400px; /* Lățimea maximă a formularului */
-    margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-width: 400px;
+  max-width: 400px;
+  margin: 0 auto;
+  background: #d7f3f7;
+  border-radius: 32px;
+  box-shadow: 0 8px 32px 0 rgba(51,4,74,0.18);
+  padding: 32px;
+}
+
+.register-form h2 {
+  background: linear-gradient(90deg, #33044a 0%, #e80459 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  text-align: center;
 }
 
 .register-form input {
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    padding-right: 20px;
-    box-sizing: border-box; /* Se va aplica padding-ul fără a afecta dimensiunile inputului */
-}
-
-.register-form button {
-    padding: 12px 20px;
-    background-color: #6a4cff;
-    color: white;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px; /* Distanță între butoane */
-}
-
-.register-form button:hover {
-    background-color: #826fd5;
-}
-
-.button-container {
-    display: flex;
-    flex-direction: column; /* Asta va pune butoanele pe verticală */
-    gap: 10px; /* Distanta între butoane */
-}
-
-/* Opțional, stil pentru butonul de "Cancel" */
-.cancel-button {
-    padding: 12px 20px;
-    background-color: #ff4d4d;
-    color: white;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.cancel-button:hover {
-    background-color: #ff6666;
-}
-
-/* Adăugăm stiluri pentru mesajele de eroare */
-.error-message {
-    color: red;
-    font-size: 0.9rem;
-    margin-top: 10px;
+  padding: 12px 18px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 24px;
+  width: 100%;
+  background: rgba(255,255,255,0.7);
+  color: #33044a;
+  margin-bottom: 0;
+  outline: none;
+  box-sizing: border-box;
 }
 
 .label {
-    display: block;
-    font-weight: bold;
+  color: #33044a;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+  margin-top: 8px;
+  display: block;
 }
 
+.register-form .button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.register-form button {
+  width: 100%;
+  padding: 14px 0;
+  border-radius: 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: none;
+  outline: none;
+}
+
+.register-form .sign-in-button {
+  background: linear-gradient(90deg, #33044a 0%, #e80459 100%) !important;
+  color: #fff !important;
+}
+.register-form .sign-in-button:hover {
+  background: linear-gradient(90deg, #e80459 0%, #33044a 100%) !important;
+}
+
+.register-form .cancel-button {
+  background: #33044a !important;
+  color: #fff !important;
+}
+.register-form .cancel-button:hover {
+  background: #e80459 !important;
+}
+
+.error-message {
+  color: #e80459;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-align: center;
+}
 .success-message {
-    color: green;
-    font-size: 1rem;
-    margin-top: 10px;
-    font-weight: bold;
-  }
+  color: #2fbad1;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.glass-form select {
+  display: none !important;
+}
   
