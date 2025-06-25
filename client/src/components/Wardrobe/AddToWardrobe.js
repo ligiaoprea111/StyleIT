@@ -171,7 +171,7 @@ const AddToWardrobe = () => {
         <div className="row justify-content-center">
           <div className="col-md-8">
             <div className="card shadow-lg">
-              <div className="card-header bg-primary text-white">
+              <div className="card-header">
                 <h2 className="mb-0">Add Item to Wardrobe</h2>
               </div>
               <div className="card-body">

@@ -5,6 +5,7 @@
   border: 2px solid #33044a !important;
   color: #33044a !important;
   transition: box-shadow 0.2s, border 0.2s, transform 0.2s !important;
+  overflow: hidden;
 }
 
 .card:hover {
@@ -15,8 +16,11 @@
 }
 
 .card-header {
-  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  background: #e80459 !important;
+  color: #fff !important;
   padding: 1.5rem;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 }
 
 .card-header h2 {

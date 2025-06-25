@@ -196,15 +196,6 @@
     margin-right: auto; /* Center */
 }
 
-.calendar-card, .scheduled-events, .outfit-suggestions-section {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(51,4,74,0.08);
-  border: 2px solid #d7f3f7;
-  color: #33044a;
-  transition: box-shadow 0.2s, border 0.2s;
-}
-
 .calendar-planner-title, .scheduled-events h4 {
   color: #e80459;
   font-weight: 700;

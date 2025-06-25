@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FaTshirt, FaShoppingBag, FaUser } from 'react-icons/fa';
 import axios from 'axios';
 import './Dashboard.css';
 import Layout from '../Layout/Layout';
@@ -10,11 +8,13 @@ import article2 from '../../assets/images/article2.jpg';
 import article3 from '../../assets/images/article3.jpg';
 import article4 from '../../assets/images/article4.jpg';
 import article5 from '../../assets/images/article5.jpg';
+import { FaUserCircle, FaTshirt, FaShoppingBag, FaUser, FaPalette } from 'react-icons/fa';
 
 const Dashboard = () => {
   const [weather, setWeather] = useState(null);
   const [articles, setArticles] = useState([]);
   const userId = localStorage.getItem('userId');
+  const [userName, setUserName] = useState('');
 
   // Helper pentru ziua săptămânii
   const getDayName = (dateStr) => {
@@ -104,66 +104,73 @@ const Dashboard = () => {
     getArticles();
   }, []);
 
+  // Fetch user name
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (!userId) return;
+      try {
+        const res = await axios.get(`/api/users/${userId}`);
+        setUserName(res.data.name || 'My Account');
+      } catch {
+        setUserName('My Account');
+      }
+    };
+    fetchUserName();
+  }, [userId]);
+
   return (
     <Layout>
-      <div className="dashboard-container">
+      <div className="dashboard-container" style={{position:'relative'}}>
+        {/* User account button */}
+        <Link to={`/profile/${userId}`} className="dashboard-user-btn">
+          <FaUserCircle style={{fontSize:28,marginRight:8,color:'#2fbad1',verticalAlign:'middle'}}/>
+          <span style={{fontWeight:600,color:'#33044a',fontSize:16,verticalAlign:'middle'}}>{userName}</span>
+        </Link>
         <h2 className="dashboard-title">Welcome to StyleIT</h2>
         
-        <Row className="g-4 mt-4">
-          <Col md={4}>
+        {/* Weather Section, Fashion Articles, etc. vor rămâne */}
+        {/* Am eliminat complet blocul dashboard-top-row și tot conținutul său */}
+
+        {/* Secțiune cu 4 carduri simetrice, colorate, 2x2 */}
+        <div className="dashboard-main-cards">
+          <div className="dashboard-main-card wardrobe-card">
             <Link to="/wardrobe" className="dashboard-link">
-              <Card className="dashboard-card">
-                <Card.Body>
-                  <div className="d-flex align-items-center">
-                    <div className="icon-container">
-                      <FaTshirt size={24} />
-                    </div>
-                    <div className="ms-3">
-                      <h3 className="card-title">Your Wardrobe</h3>
-                      <p className="card-text">View and manage your clothing items</p>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
+              <div className="dashboard-main-icon"><FaTshirt size={28}/></div>
+              <div>
+                <div className="dashboard-main-title" style={{fontSize:'1.05rem'}}>Your Wardrobe</div>
+                <div className="dashboard-main-desc" style={{fontSize:'0.95rem'}}>View and manage your clothing items</div>
+              </div>
             </Link>
-          </Col>
-
-          <Col md={4}>
+          </div>
+          <div className="dashboard-main-card add-card">
             <Link to="/wardrobe/add" className="dashboard-link">
-              <Card className="dashboard-card">
-                <Card.Body>
-                  <div className="d-flex align-items-center">
-                    <div className="icon-container">
-                      <FaShoppingBag size={24} />
-                    </div>
-                    <div className="ms-3">
-                      <h3 className="card-title">Add Items</h3>
-                      <p className="card-text">Add new items to your wardrobe</p>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
+              <div className="dashboard-main-icon"><FaShoppingBag size={28}/></div>
+              <div>
+                <div className="dashboard-main-title" style={{fontSize:'1.05rem'}}>Add Items</div>
+                <div className="dashboard-main-desc" style={{fontSize:'0.95rem'}}>Add new items to your wardrobe</div>
+              </div>
             </Link>
-          </Col>
-
-          <Col md={4}>
-            <Link to={`/profile/${userId}`} className="dashboard-link">
-              <Card className="dashboard-card">
-                <Card.Body>
-                  <div className="d-flex align-items-center">
-                    <div className="icon-container">
-                      <FaUser size={24} />
-                    </div>
-                    <div className="ms-3">
-                      <h3 className="card-title">Your Profile</h3>
-                      <p className="card-text">Manage your account settings</p>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
+          </div>
+          {/* Card nou: Outfit Calendar */}
+          <div className="dashboard-main-card calendar-card">
+            <Link to="/calendar" className="dashboard-link">
+              <div className="dashboard-main-icon"><FaUser size={28}/></div>
+              <div>
+                <div className="dashboard-main-title" style={{fontSize:'1.05rem'}}>Outfit Calendar</div>
+                <div className="dashboard-main-desc" style={{fontSize:'0.95rem'}}>Plan your outfits for upcoming events</div>
+              </div>
             </Link>
-          </Col>
-        </Row>
+          </div>
+          <div className="dashboard-main-card ai-card">
+            <Link to="/ai-assistant" className="dashboard-link">
+              <div className="dashboard-main-icon"><FaPalette size={28}/></div>
+              <div>
+                <div className="dashboard-main-title" style={{fontSize:'1.05rem'}}>StyleIT AI Assistant</div>
+                <div className="dashboard-main-desc" style={{fontSize:'0.95rem'}}>Ask for outfit ideas, style tips, or wardrobe suggestions powered by AI.</div>
+              </div>
+            </Link>
+          </div>
+        </div>
 
         {/* Weather Section */}
         <section className="weather mt-5">

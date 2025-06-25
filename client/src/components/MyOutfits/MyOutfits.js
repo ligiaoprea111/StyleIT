@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../Layout/Layout';
 import axios from 'axios';
-import { Card, Col, Row, Container, Alert, Button } from 'react-bootstrap';
-import { FaFolderOpen } from 'react-icons/fa';
+import { Col, Row, Container, Alert } from 'react-bootstrap';
+import { FaFolderOpen, FaRegHeart, FaEdit, FaGlassCheers, FaShoePrints, FaGlasses, FaTrash } from 'react-icons/fa';
 import './MyOutfits.css';
 import { useNavigate } from 'react-router-dom';
 import OutfitViewModal from '../OutfitViewModal/OutfitViewModal';
@@ -43,11 +43,6 @@ const MyOutfits = () => {
     fetchOutfits();
   }, []);
 
-  const handleCardClick = (outfit) => {
-    setViewingOutfit(outfit);
-    setShowViewModal(true);
-  };
-
   const handleCloseViewModal = () => {
     setShowViewModal(false);
     setViewingOutfit(null);
@@ -84,6 +79,14 @@ const MyOutfits = () => {
     }
   };
 
+  const getBadgeIcon = (title) => {
+    const t = title.toLowerCase();
+    if (t.includes('party')) return <FaGlassCheers className="outfit-badge-icon" />;
+    if (t.includes('workout')) return <FaShoePrints className="outfit-badge-icon" />;
+    if (t.includes('work')) return <FaGlasses className="outfit-badge-icon" />;
+    return null;
+  };
+
   return (
     <Layout>
       <Container className="py-4">
@@ -104,17 +107,36 @@ const MyOutfits = () => {
           <Row xs={1} sm={2} md={3} lg={4} className="g-4">
             {outfits.map(outfit => (
               <Col key={outfit.id}>
-                <Card style={{ cursor: 'pointer' }}>
-                  <Card.Body>
-                    <Card.Title>{outfit.name}</Card.Title>
-                    {outfit.date && <Card.Subtitle className="mb-2 text-muted">Date: {new Date(outfit.date).toLocaleDateString()}</Card.Subtitle>}
-                    
-                    <Button variant="primary" size="sm" className="mt-3" onClick={() => handleCardClick(outfit)}>
-                        View Details
-                    </Button>
-
-                  </Card.Body>
-                </Card>
+                <div className="outfit-modern-card">
+                  <div className="outfit-card-header">
+                    <span className="outfit-badge">
+                      {getBadgeIcon(outfit.name)}
+                      {outfit.name}
+                    </span>
+                    <span className="outfit-icons">
+                      <FaRegHeart className="outfit-icon" title="Favorite" />
+                      <FaEdit className="outfit-icon" title="Edit" onClick={() => handleEditOutfit(outfit)} />
+                      <FaTrash className="outfit-icon" title="Delete" onClick={() => handleDeleteOutfit(outfit.id)} />
+                    </span>
+                  </div>
+                  <div className="outfit-collage">
+                    {outfit.ClothingItems && outfit.ClothingItems.length > 0 ? (
+                      outfit.ClothingItems.map(item => (
+                        <img
+                          key={item.id}
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="outfit-collage-img"
+                        />
+                      ))
+                    ) : (
+                      <div className="outfit-collage-placeholder">No items</div>
+                    )}
+                  </div>
+                  <div className="outfit-description">
+                    {outfit.description || outfit.ClothingItems?.map(item => item.name).join(', ')}
+                  </div>
+                </div>
               </Col>
             ))}
           </Row>
