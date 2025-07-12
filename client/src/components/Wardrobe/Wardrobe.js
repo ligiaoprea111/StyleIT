@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Nav, Row, Col, Card, Alert, Button } from "react-bootstrap";
-import { FaTshirt, FaPlus, FaCheckCircle } from "react-icons/fa";
+import { FaTshirt, FaPlus, FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Wardrobe.css"; // Uncomment if you want to add custom styles
 import ImageModal from '../ImageModal/ImageModal';
@@ -55,6 +55,10 @@ const Wardrobe = () => {
 
   // State for the save outfit modal
   const [showSaveModal, setShowSaveModal] = useState(false);
+
+  // State for edit modal
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editItem, setEditItem] = useState(null);
 
   // Fetch clothing items from backend and check for editOutfitId in URL
   useEffect(() => {
@@ -259,6 +263,39 @@ const Wardrobe = () => {
       // Removed: setSaveOutfitError(null);
   };
 
+  // Funcție pentru ștergere articol
+  const handleDeleteItem = async (itemId) => {
+    if (!window.confirm('Are you sure you want to delete this item?')) return;
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`/api/clothing-items/${itemId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setClothingItems(items => items.filter(item => item.id !== itemId));
+    } catch (err) {
+      alert('Failed to delete item.');
+    }
+  };
+  // Funcție pentru deschidere modal editare
+  const handleEditItem = (item) => {
+    setEditItem(item);
+    setShowEditModal(true);
+  };
+  // Funcție pentru salvare editare
+  const handleSaveEdit = async (updatedItem) => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await axios.put(`/api/clothing-items/${updatedItem.id}`, updatedItem, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setClothingItems(items => items.map(item => item.id === updatedItem.id ? res.data : item));
+      setShowEditModal(false);
+      setEditItem(null);
+    } catch (err) {
+      alert('Failed to update item.');
+    }
+  };
+
   return (
     <Layout>
       <div className="wardrobe-container">
@@ -372,6 +409,12 @@ const Wardrobe = () => {
                             {item.category}
                             {item.subCategory ? ` - ${item.subCategory}` : ""}
                           </Card.Text>
+                          {!isSelectingForOutfit && (
+                            <div className="d-flex gap-2 mt-2">
+                              <Button size="sm" variant="outline-primary" onClick={e => { e.stopPropagation(); handleEditItem(item); }}><FaEdit /></Button>
+                              <Button size="sm" variant="outline-danger" onClick={e => { e.stopPropagation(); handleDeleteItem(item.id); }}><FaTrash /></Button>
+                            </div>
+                          )}
                         </Card.Body>
                       </Card>
                     </Col>
@@ -397,6 +440,59 @@ const Wardrobe = () => {
           imageUrl={selectedImage}
           onClose={handleCloseModal}
         />
+      )}
+
+      {showEditModal && editItem && (
+        <div className="modal show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Edit Item</h5>
+                <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <form id="edit-item-form" onSubmit={e => { e.preventDefault(); handleSaveEdit(editItem); }}>
+                  <div className="mb-2">
+                    <label className="form-label">Name</label>
+                    <input type="text" className="form-control" value={editItem.name} onChange={e => setEditItem({ ...editItem, name: e.target.value })} required />
+                  </div>
+                  <div className="mb-2">
+                    <label className="form-label">Category</label>
+                    <input type="text" className="form-control" value={editItem.category} onChange={e => setEditItem({ ...editItem, category: e.target.value })} required />
+                  </div>
+                  <div className="mb-2">
+                    <label className="form-label">Subcategory</label>
+                    <input type="text" className="form-control" value={editItem.subCategory || ''} onChange={e => setEditItem({ ...editItem, subCategory: e.target.value })} />
+                  </div>
+                  <div className="mb-2">
+                    <label className="form-label">Color</label>
+                    <input type="text" className="form-control" value={editItem.color || ''} onChange={e => setEditItem({ ...editItem, color: e.target.value })} />
+                  </div>
+                  <div className="mb-2">
+                    <label className="form-label">Material</label>
+                    <input type="text" className="form-control" value={editItem.material || ''} onChange={e => setEditItem({ ...editItem, material: e.target.value })} />
+                  </div>
+                  <div className="mb-2">
+                    <label className="form-label">Season</label>
+                    <input type="text" className="form-control" value={editItem.season || ''} onChange={e => setEditItem({ ...editItem, season: e.target.value })} />
+                  </div>
+                  <div className="mb-2">
+                    <label className="form-label">Description</label>
+                    <textarea className="form-control" value={editItem.description || ''} onChange={e => setEditItem({ ...editItem, description: e.target.value })} />
+                  </div>
+                  <div className="mb-2">
+                    <label className="form-label">Tags</label>
+                    <input type="text" className="form-control" value={editItem.tags || ''} onChange={e => setEditItem({ ...editItem, tags: e.target.value })} />
+                  </div>
+                </form>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary" form="edit-item-form">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </Layout>
   );

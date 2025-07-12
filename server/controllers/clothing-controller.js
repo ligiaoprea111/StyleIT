@@ -187,3 +187,49 @@ Respond ONLY with valid JSON in this format:
     res.status(500).json({ error: "Failed to generate outfit" });
   }
 };
+
+export const deleteClothingItem = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const userId = req.user?.userId || req.body.userId;
+    if (!itemId) {
+      return res.status(400).json({ error: 'Missing item id' });
+    }
+    // Opțional: verifică dacă itemul aparține userului
+    const item = await db.ClothingItem.findOne({ where: { id: itemId, userId } });
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found or not owned by user' });
+    }
+    await item.destroy();
+    res.json({ message: 'Item deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting clothing item:', error);
+    res.status(500).json({ error: 'Failed to delete clothing item' });
+  }
+};
+
+export const updateClothingItem = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const userId = req.user?.userId || req.body.userId;
+    if (!itemId) {
+      return res.status(400).json({ error: 'Missing item id' });
+    }
+    const item = await db.ClothingItem.findOne({ where: { id: itemId, userId } });
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found or not owned by user' });
+    }
+    // Actualizează doar câmpurile permise
+    const allowedFields = ['name', 'category', 'subCategory', 'color', 'material', 'season', 'description', 'tags', 'imageUrl'];
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        item[field] = req.body[field];
+      }
+    });
+    await item.save();
+    res.json(item);
+  } catch (error) {
+    console.error('Error updating clothing item:', error);
+    res.status(500).json({ error: 'Failed to update clothing item' });
+  }
+};
