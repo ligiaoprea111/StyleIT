@@ -20,6 +20,14 @@
   padding: 25px;
   border-radius: 12px;
   box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+  border: 2px solid #d7f3f7;
+  box-sizing: border-box;
+  overflow: auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  z-index: 1;
+  transition: box-shadow 0.2s, border 0.2s;
 }
 
 .form-label {
@@ -74,4 +82,12 @@ textarea:focus {
   border-color: #4CAF50;
   color: white;
   font-weight: bold;
+}
+
+/* Hover: doar shadow și border, fără să schimbe dimensiunea! */
+.preferences-form:hover, .preferences-form:focus-within {
+  box-shadow: 0 4px 24px rgba(51,4,74,0.08);
+  border: 2px solid #d7f3f7;
+  /* Nu modific padding, margin, scale, background sau transform! */
+  transform: none !important;
 }

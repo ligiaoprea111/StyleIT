@@ -34,8 +34,6 @@ const Profile = () => {
         console.error('Profile: Invalid or missing User ID. Aborting fetch.', { id, storedUserId, currentUserId });
         setError('User information not available. Please log in again.');
         setLoading(false);
-        // We might want to redirect to login here if currentUserId is consistently invalid
-        // navigate('/');
         return;
       }
 
@@ -47,7 +45,11 @@ const Profile = () => {
         console.log(`Profile: Attempting to fetch profile with ID: ${currentUserId} at /api/profile/${currentUserId}`);
         const profileResponse = await axios.get(`/api/profile/${currentUserId}`);
         setProfile(profileResponse.data);
-        setEditedProfile(profileResponse.data);
+        setEditedProfile({
+          ...profileResponse.data,
+          name: userResponse.data.name,
+          email: userResponse.data.email
+        });
 
         try {
           console.log(`Profile: Attempting to fetch style preferences for user ID: ${currentUserId} at /api/style-preferences`);
@@ -128,7 +130,14 @@ const Profile = () => {
           name: editedProfile.name
         };
       }
+      // Update profile (Profile table)
       await axios.put(`/api/profile/${id}`, dataToSend, config);
+      // Update user (User table)
+      const userUpdateRes = await axios.put(`/api/users/${id}`, {
+        name: editedProfile.name,
+        email: editedProfile.email
+      });
+      setUser(userUpdateRes.data);
       setProfile(editedProfile);
       setIsEditing(false);
     } catch (error) {
@@ -149,6 +158,20 @@ const Profile = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  // Adaugă funcție pentru refresh preferințe stil
+  const refreshStylePreferences = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return setStylePreferences(null);
+      const preferencesResponse = await axios.get(`/api/style-preferences`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setStylePreferences(preferencesResponse.data);
+    } catch (err) {
+      setStylePreferences(null);
+    }
   };
 
   if (loading) {
@@ -227,31 +250,34 @@ const Profile = () => {
                   <h4 className="mb-0">Style Preferences</h4>
                   {!isEditingStyle ? (
                     <Button variant="outline-primary" size="sm" onClick={() => setIsEditingStyle(true)}><FaEdit className="me-2" />Edit</Button>
-                  ) : (
-                    <div className="d-flex gap-2">
-                      <Button variant="primary" size="sm" onClick={() => setIsEditingStyle(false)}>Save</Button>
-                      <Button variant="secondary" size="sm" onClick={() => setIsEditingStyle(false)}>Cancel</Button>
-                    </div>
-                  )}
+                  ) : null}
                 </div>
                 {isEditingStyle ? (
-                  <StylePreferencesForm key={isEditingStyle ? JSON.stringify(stylePreferences) : 'view'} initialPreferences={stylePreferences} />
+                  <StylePreferencesForm
+                    initialPreferences={stylePreferences}
+                    onSave={async () => { setIsEditingStyle(false); await refreshStylePreferences(); }}
+                    onCancel={async () => { setIsEditingStyle(false); await refreshStylePreferences(); }}
+                  />
                 ) : (
-                  <Row>
-                    <Col md={6}>
-                      <div className="preference-item"><strong>Style Preference:</strong><p>{stylePreferences?.style_preference || 'Not specified'}</p></div>
-                      <div className="preference-item"><strong>Outfit Feel:</strong><p>{stylePreferences?.outfit_feel || 'Not specified'}</p></div>
+                  <div className="preferences-row">
+                    <div className="preference-col">
+                      <div className="preference-item"><strong>Sex / Gender:</strong><p>{stylePreferences?.sex_gender || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Style Preference:</strong><p>{(stylePreferences?.style_preference || 'Not specified').toString().split(',').join(', ')}</p></div>
+                      <div className="preference-item"><strong>Favorite Colors:</strong><p>{(stylePreferences?.favorite_colors || 'Not specified').toString().split(',').join(', ')}</p></div>
+                      <div className="preference-item"><strong>Outfit Feel:</strong><p>{(stylePreferences?.outfit_feel || 'Not specified').toString().split(',').join(', ')}</p></div>
+                      <div className="preference-item"><strong>Frequent Events:</strong><p>{(stylePreferences?.frequent_events || 'Not specified').toString().split(',').join(', ')}</p></div>
                       <div className="preference-item"><strong>Body Shape:</strong><p>{stylePreferences?.body_shape || 'Not specified'}</p></div>
-                      <div className="preference-item"><strong>Favorite Items:</strong><p>{stylePreferences?.favorite_items || 'Not specified'}</p></div>
-                      <div className="preference-item"><strong>Favorite Colors:</strong><p>{stylePreferences?.favorite_colors || 'Not specified'}</p></div>
-                    </Col>
-                    <Col md={6}>
-                      <div className="preference-item"><strong>Preferred Materials:</strong><p>{stylePreferences?.preferred_materials || 'Not specified'}</p></div>
-                      <div className="preference-item"><strong>Frequent Events:</strong><p>{stylePreferences?.frequent_events || 'Not specified'}</p></div>
-                      <div className="preference-item"><strong>Preferred Accessories:</strong><p>{stylePreferences?.preferred_accessories || 'Not specified'}</p></div>
-                      <div className="preference-item"><strong>Avoided Outfits:</strong><p>{stylePreferences?.avoided_outfits || 'Not specified'}</p></div>
-                    </Col>
-                  </Row>
+                    </div>
+                    <div className="preference-col">
+                      <div className="preference-item"><strong>Favorite Items:</strong><p>{(stylePreferences?.favorite_items || 'Not specified').toString().split(',').join(', ')}</p></div>
+                      <div className="preference-item"><strong>Preferred Materials:</strong><p>{(stylePreferences?.preferred_materials || 'Not specified').toString().split(',').join(', ')}</p></div>
+                      <div className="preference-item"><strong>Preferred Accessories:</strong><p>{(stylePreferences?.preferred_accessories || 'Not specified').toString().split(',').join(', ')}</p></div>
+                      <div className="preference-item"><strong>Disliked Patterns / Combinations:</strong><p>{(stylePreferences?.dislikes || 'Not specified').toString().split(',').join(', ')}</p></div>
+                      <div className="preference-item"><strong>Style Inspirations:</strong><p>{stylePreferences?.inspirations || 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Height:</strong><p>{stylePreferences?.height ? `${stylePreferences.height} cm` : 'Not specified'}</p></div>
+                      <div className="preference-item"><strong>Weight:</strong><p>{stylePreferences?.weight ? `${stylePreferences.weight} kg` : 'Not specified'}</p></div>
+                    </div>
+                  </div>
                 )}
               </Card.Body>
             </Card>

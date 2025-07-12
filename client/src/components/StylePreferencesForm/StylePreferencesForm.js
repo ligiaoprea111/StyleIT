@@ -24,33 +24,46 @@ const COLOR_MAP = {
   // adaugă aici alte variante dacă ai nevoie
 };
 
-const normalizePreferences = (prefs = {}) => ({
-  ...prefs,
-  style_preference: Array.isArray(prefs.style_preference)
-    ? prefs.style_preference.map(val => STYLE_MAP[val] || val)
-    : (prefs.style_preference
-        ? prefs.style_preference.split(',').map(s => STYLE_MAP[s.trim()] || s.trim())
-        : []),
-  favorite_colors: Array.isArray(prefs.favorite_colors)
-    ? prefs.favorite_colors.map(val => COLOR_MAP[val] || val)
-    : (prefs.favorite_colors
-        ? prefs.favorite_colors.split(',').map(s => COLOR_MAP[s.trim().toLowerCase()] || s.trim())
-        : []),
-  outfit_feel: Array.isArray(prefs.outfit_feel)
-    ? prefs.outfit_feel
-    : (prefs.outfit_feel ? prefs.outfit_feel.split(',').map(s => s.trim()) : []),
-  frequent_events: Array.isArray(prefs.frequent_events)
-    ? prefs.frequent_events
-    : (prefs.frequent_events ? prefs.frequent_events.split(',').map(s => s.trim()) : []),
-  dislikes: prefs.dislikes || '',
-  inspirations: prefs.inspirations || '',
-  sex_gender: prefs.sex_gender || '',
-  body_shape: prefs.body_shape || '',
-  height: prefs.height || '',
-  weight: prefs.weight || ''
-});
+const normalizePreferences = (prefs = {}) => {
+  // Define valid options for outfit_feel to filter out old/invalid values
+  const validOutfitFeelOptions = ['Loose', 'Slim-fit', 'Oversized', 'Comfort-focused', 'Flexible'];
 
-const StylePreferencesForm = ({ initialPreferences }) => {
+  // Helper pentru orice multi-select: forțează array din orice input (array, string, null, undefined), curăță spații, elimină duplicate și normalizează la lowercase pentru comparație corectă
+  const forceArray = (val) => {
+    if (Array.isArray(val)) return Array.from(new Set(val.map(s => (s || '').toString().trim().toLowerCase()).filter(Boolean)));
+    if (typeof val === 'string' && val.length > 0) return Array.from(new Set(val.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)));
+    return [];
+  };
+
+  // Helper pentru a pune prima literă mare (ex: "jeans" -> "Jeans")
+  function capitalize(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  const result = {
+    ...prefs,
+    style_preference: forceArray(prefs.style_preference).map(val => STYLE_MAP[val] || capitalize(val)),
+    favorite_colors: forceArray(prefs.favorite_colors).map(val => COLOR_MAP[val] || capitalize(val)),
+    outfit_feel: forceArray(prefs.outfit_feel).filter(val => validOutfitFeelOptions.map(v => v.toLowerCase()).includes(val)).map(capitalize),
+    frequent_events: forceArray(prefs.frequent_events).map(capitalize),
+    favorite_items: forceArray(prefs.favorite_items).map(capitalize),
+    preferred_materials: forceArray(prefs.preferred_materials).map(capitalize),
+    preferred_accessories: forceArray(prefs.preferred_accessories).map(capitalize),
+    dislikes: prefs.dislikes || '',
+    inspirations: prefs.inspirations || '',
+    sex_gender: prefs.sex_gender || '',
+    body_shape: prefs.body_shape || '',
+    height: prefs.height || '',
+    weight: prefs.weight || ''
+  };
+
+  console.log('normalizePreferences result:', result);
+
+  return result;
+};
+
+const StylePreferencesForm = ({ initialPreferences, onSave, onCancel }) => {
   console.log('initialPreferences', initialPreferences);
   const [preferences, setPreferences] = useState(
     initialPreferences ? normalizePreferences(initialPreferences) : {
@@ -59,6 +72,9 @@ const StylePreferencesForm = ({ initialPreferences }) => {
       favorite_colors: [],
       outfit_feel: [],
       frequent_events: [],
+      favorite_items: [],
+      preferred_materials: [],
+      preferred_accessories: [],
       dislikes: '',
       inspirations: '',
       body_shape: '',
@@ -70,25 +86,14 @@ const StylePreferencesForm = ({ initialPreferences }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Folosesc un ref ca să mă asigur că initialPreferences e folosit doar la montare
+  const didInit = React.useRef(false);
   useEffect(() => {
-    if (initialPreferences) {
+    if (!didInit.current && initialPreferences) {
+      console.log('RESET FORM STATE din useEffect (doar la montare!)', initialPreferences);
       setPreferences(normalizePreferences(initialPreferences));
-      return;
+      didInit.current = true;
     }
-    const fetchPreferences = async () => {
-      try {
-        const response = await axios.get('/api/style-preferences', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt')}`
-          }
-        });
-        setPreferences(normalizePreferences(response.data));
-      } catch (err) {
-        console.error('Error fetching preferences:', err);
-        setError('Failed to load preferences.');
-      }
-    };
-    fetchPreferences();
   }, [initialPreferences]);
 
   const handleChange = (e) => {
@@ -101,7 +106,17 @@ const StylePreferencesForm = ({ initialPreferences }) => {
 
   const handleMultiSelect = (name, value, limit) => {
     setPreferences((prev) => {
-      const selected = prev[name];
+      let selected = prev[name];
+      // Forțez array pentru orice caz
+      if (!Array.isArray(selected)) {
+        if (typeof selected === 'string' && selected.length > 0) {
+          selected = selected.split(',').map(s => s.trim()).filter(Boolean);
+        } else {
+          selected = [];
+        }
+      }
+      console.log(`handleMultiSelect - ${name}:`, { selected, value, limit, isArray: Array.isArray(selected) });
+
       if (selected.includes(value)) {
         return { ...prev, [name]: selected.filter((v) => v !== value) };
       }
@@ -118,10 +133,10 @@ const StylePreferencesForm = ({ initialPreferences }) => {
       setLoading(true);
       await axios.post('/api/style-preferences', preferences, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      alert('Preferences saved successfully!');
+      if (onSave) onSave();
     } catch (err) {
       console.error('Error saving preferences:', err);
       setError('Failed to save preferences.');
@@ -156,7 +171,7 @@ const StylePreferencesForm = ({ initialPreferences }) => {
             <div key={style}>
               <input
                 type="checkbox"
-                checked={preferences.style_preference.includes(style)}
+                checked={preferences.style_preference.map(s => s.toLowerCase()).includes(style.toLowerCase())}
                 onChange={() => handleMultiSelect('style_preference', style, 2)}
               /> {style}
             </div>
@@ -169,7 +184,7 @@ const StylePreferencesForm = ({ initialPreferences }) => {
             <div key={palette}>
               <input
                 type="checkbox"
-                checked={preferences.favorite_colors.includes(palette)}
+                checked={preferences.favorite_colors.map(c => c.toLowerCase()).includes(palette.toLowerCase())}
                 onChange={() => handleMultiSelect('favorite_colors', palette, 3)}
               /> {palette}
             </div>
@@ -183,7 +198,7 @@ const StylePreferencesForm = ({ initialPreferences }) => {
             <div key={option}>
               <input
                 type="checkbox"
-                checked={preferences.outfit_feel.includes(option)}
+                checked={preferences.outfit_feel.map(f => f.toLowerCase()).includes(option.toLowerCase())}
                 onChange={() => handleMultiSelect('outfit_feel', option, 3)}
               /> {option}
             </div>
@@ -196,9 +211,48 @@ const StylePreferencesForm = ({ initialPreferences }) => {
             <div key={event}>
               <input
                 type="checkbox"
-                checked={preferences.frequent_events.includes(event)}
+                checked={preferences.frequent_events.map(e => e.toLowerCase()).includes(event.toLowerCase())}
                 onChange={() => handleMultiSelect('frequent_events', event, 3)}
               /> {event}
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Favorite Items (max 3)</label>
+          {['Jeans', 'Dresses', 'T-shirts', 'Sneakers', 'Jackets', 'Sweaters', 'Shirts', 'Skirts'].map(item => (
+            <div key={item}>
+              <input
+                type="checkbox"
+                checked={preferences.favorite_items.map(i => i.toLowerCase()).includes(item.toLowerCase())}
+                onChange={() => handleMultiSelect('favorite_items', item, 3)}
+              /> {item}
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Preferred Materials (max 3)</label>
+          {['Cotton', 'Denim', 'Leather', 'Silk', 'Wool', 'Polyester', 'Linen', 'Suede'].map(material => (
+            <div key={material}>
+              <input
+                type="checkbox"
+                checked={preferences.preferred_materials.map(m => m.toLowerCase()).includes(material.toLowerCase())}
+                onChange={() => handleMultiSelect('preferred_materials', material, 3)}
+              /> {material}
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Preferred Accessories (max 3)</label>
+          {['Watches', 'Necklaces', 'Bracelets', 'Earrings', 'Belts', 'Scarves', 'Hats', 'Bags'].map(accessory => (
+            <div key={accessory}>
+              <input
+                type="checkbox"
+                checked={preferences.preferred_accessories.map(a => a.toLowerCase()).includes(accessory.toLowerCase())}
+                onChange={() => handleMultiSelect('preferred_accessories', accessory, 3)}
+              /> {accessory}
             </div>
           ))}
         </div>
@@ -261,10 +315,15 @@ const StylePreferencesForm = ({ initialPreferences }) => {
           />
         </div>
 
-        <div className="d-flex justify-content-center">
+        <div className="d-flex justify-content-center gap-2 mt-4">
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? 'Saving...' : 'Save Preferences'}
           </button>
+          {onCancel && (
+            <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={loading}>
+              Cancel
+            </button>
+          )}
         </div>
       </form>
     </div>

@@ -214,7 +214,7 @@
 }
 
 .style-preferences-card {
-  margin-top: 0.5rem;
+  margin-top: 3rem; /* spațiu generos între carduri */
   padding: 0.5rem 0;
 }
 
@@ -294,4 +294,21 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.preferences-row {
+  display: flex;
+  align-items: stretch;
+}
+
+.preference-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.preference-item {
+  flex: none;
 } 

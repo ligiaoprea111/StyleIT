@@ -14,7 +14,11 @@ export default (sequelize, DataTypes) => {
     body_shape: DataTypes.STRING,
     favorite_items: DataTypes.STRING,
     preferred_materials: DataTypes.STRING,
-    avoided_outfits: DataTypes.STRING
+    dislikes: DataTypes.STRING,
+    sex_gender: DataTypes.STRING,
+    inspirations: DataTypes.STRING,
+    height: DataTypes.STRING,
+    weight: DataTypes.STRING
   }, {
     tableName: 'StylePreferences',
     timestamps: true

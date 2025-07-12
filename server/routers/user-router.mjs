@@ -1,5 +1,5 @@
 import express from "express";
-import { getUsers, createUser } from "../controllers/user-controller.mjs";  
+import { getUsers, createUser, updateUser } from "../controllers/user-controller.mjs";  
 import { loginUser } from "../controllers/auth-controller.mjs"; 
 import db from "../models/index.js";
 
@@ -14,6 +14,9 @@ router.post("/", createUser);
 
 // Ruta pentru autentificare
 router.post("/login", loginUser);
+
+// Ruta pentru actualizarea unui utilizator
+router.put("/:id", updateUser);
 
 // GET user by ID
 router.get("/:id", async (req, res) => {
