@@ -32,9 +32,7 @@ const Dashboard = () => {
           const response = await axios.get(
             `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=727eb2aa28801b429db6e543a3479fbc`
           );
-          const dailyForecast = response.data.list.filter(item =>
-            item.dt_txt.includes("12:00:00")
-          );
+          const dailyForecast = processForecast(response.data.list);
           setWeather({
             city: response.data.city,
             forecast: dailyForecast
@@ -53,14 +51,46 @@ const Dashboard = () => {
       const response = await axios.get(
         `https://api.openweathermap.org/data/2.5/forecast?q=Bucharest&appid=727eb2aa28801b429db6e543a3479fbc`
       );
-      const dailyForecast = response.data.list.filter(item =>
-        item.dt_txt.includes("12:00:00")
-      );
+      const dailyForecast = processForecast(response.data.list);
       setWeather({
         city: response.data.city,
         forecast: dailyForecast
       });
     };
+
+    // Procesare prognoză: mereu include azi, alege cea mai apropiată oră de 12:00 pentru fiecare zi, 5 zile
+    function processForecast(list) {
+      const grouped = {};
+      list.forEach(item => {
+        const date = item.dt_txt.split(' ')[0];
+        if (!grouped[date]) grouped[date] = [];
+        grouped[date].push(item);
+      });
+      // Pentru fiecare zi, alege forecast-ul cel mai apropiat de 12:00
+      const getClosestToNoon = (arr) => {
+        return arr.reduce((prev, curr) => {
+          const prevDiff = Math.abs(parseInt(prev.dt_txt.split(' ')[1].split(':')[0], 10) - 12);
+          const currDiff = Math.abs(parseInt(curr.dt_txt.split(' ')[1].split(':')[0], 10) - 12);
+          return currDiff < prevDiff ? curr : prev;
+        });
+      };
+      // Ordine cronologică, mereu începe cu azi
+      const todayStr = new Date().toISOString().split('T')[0];
+      const allDates = Object.keys(grouped).sort();
+      // Găsește indexul pentru azi
+      let todayIdx = allDates.indexOf(todayStr);
+      if (todayIdx === -1) todayIdx = 0; // fallback dacă nu există azi
+      // Selectează 5 zile, începând cu azi
+      const selectedDates = allDates.slice(todayIdx, todayIdx + 5);
+      // Dacă nu sunt suficiente, completează cu zile următoare
+      while (selectedDates.length < 5 && allDates.length > 0) {
+        const nextIdx = todayIdx + selectedDates.length;
+        if (allDates[nextIdx]) selectedDates.push(allDates[nextIdx]);
+        else break;
+      }
+      // Construiește lista finală
+      return selectedDates.map(date => getClosestToNoon(grouped[date]));
+    }
 
     getWeather();
   }, []);
@@ -68,38 +98,78 @@ const Dashboard = () => {
   // Get fashion articles
   useEffect(() => {
     const getArticles = async () => {
-      setArticles([
-        {
-          title: "Top 5 trends for spring 2025",
-          description: "Discover which clothing pieces will dominate the warm season.",
-          link: "https://www.vogue.co.uk/article/spring-summer-2025-fashion-trends",
-          image: article1
-        },
-        {
-          title: "How to create an elegant summer look",
-          description: "Simple tricks for a light and sophisticated style.",
-          link: "https://www.whowhatwear.com/fashion/summer/elegant-summer-style",
-          image: article2
-        },
-        {
-          title: "Pastel colors are making a comeback",
-          description: "Learn how to integrate them into your everyday outfits.",
-          link: "https://www.whowhatwear.com/fashion/outfit-ideas/how-to-wear-pastel-colors",
-          image: article3
-        },
-        {
-          title: "How to accessorize an evening outfit",
-          description: "The right accessories can completely transform an outfit.",
-          link: "https://www.jovani.com/blog/formal-events/how-to-accessorize-formal-evening-wear/",
-          image: article4
-        },
-        {
-          title: "Comfy outfits for work-from-home",
-          description: "Style and comfort even on Zoom meeting days.",
-          link: "https://www.c-and-a.com/eu/en/shop/working-from-home-outfit-tips",
-          image: article5
-        }        
-      ]);
+      try {
+        const res = await axios.get('/api/fashion-news');
+        if (res.data && res.data.articles && res.data.articles.length > 0) {
+          setArticles(res.data.articles);
+        } else {
+          setArticles([
+            {
+              title: "Top 5 trends for spring 2025",
+              description: "Discover which clothing pieces will dominate the warm season.",
+              link: "https://www.vogue.co.uk/article/spring-summer-2025-fashion-trends",
+              image: article1
+            },
+            {
+              title: "How to create an elegant summer look",
+              description: "Simple tricks for a light and sophisticated style.",
+              link: "https://www.whowhatwear.com/fashion/summer/elegant-summer-style",
+              image: article2
+            },
+            {
+              title: "Pastel colors are making a comeback",
+              description: "Learn how to integrate them into your everyday outfits.",
+              link: "https://www.whowhatwear.com/fashion/outfit-ideas/how-to-wear-pastel-colors",
+              image: article3
+            },
+            {
+              title: "How to accessorize an evening outfit",
+              description: "The right accessories can completely transform an outfit.",
+              link: "https://www.jovani.com/blog/formal-events/how-to-accessorize-formal-evening-wear/",
+              image: article4
+            },
+            {
+              title: "Comfy outfits for work-from-home",
+              description: "Style and comfort even on Zoom meeting days.",
+              link: "https://www.c-and-a.com/eu/en/shop/working-from-home-outfit-tips",
+              image: article5
+            }
+          ]);
+        }
+      } catch (err) {
+        setArticles([
+          {
+            title: "Top 5 trends for spring 2025",
+            description: "Discover which clothing pieces will dominate the warm season.",
+            link: "https://www.vogue.co.uk/article/spring-summer-2025-fashion-trends",
+            image: article1
+          },
+          {
+            title: "How to create an elegant summer look",
+            description: "Simple tricks for a light and sophisticated style.",
+            link: "https://www.whowhatwear.com/fashion/summer/elegant-summer-style",
+            image: article2
+          },
+          {
+            title: "Pastel colors are making a comeback",
+            description: "Learn how to integrate them into your everyday outfits.",
+            link: "https://www.whowhatwear.com/fashion/outfit-ideas/how-to-wear-pastel-colors",
+            image: article3
+          },
+          {
+            title: "How to accessorize an evening outfit",
+            description: "The right accessories can completely transform an outfit.",
+            link: "https://www.jovani.com/blog/formal-events/how-to-accessorize-formal-evening-wear/",
+            image: article4
+          },
+          {
+            title: "Comfy outfits for work-from-home",
+            description: "Style and comfort even on Zoom meeting days.",
+            link: "https://www.c-and-a.com/eu/en/shop/working-from-home-outfit-tips",
+            image: article5
+          }
+        ]);
+      }
     };
     getArticles();
   }, []);
@@ -126,7 +196,7 @@ const Dashboard = () => {
           <FaUserCircle style={{fontSize:28,marginRight:8,color:'#2fbad1',verticalAlign:'middle'}}/>
           <span style={{fontWeight:600,color:'#33044a',fontSize:16,verticalAlign:'middle'}}>{userName}</span>
         </Link>
-        <h2 className="dashboard-title">Welcome to StyleIT</h2>
+        <h2 className="dashboard-title">Welcome to your interactive digital wardrobe!</h2>
         
         {/* Weather Section, Fashion Articles, etc. vor rămâne */}
         {/* Am eliminat complet blocul dashboard-top-row și tot conținutul său */}
@@ -174,19 +244,23 @@ const Dashboard = () => {
 
         {/* Weather Section */}
         <section className="weather mt-5">
-          <h3>Weather Forecast</h3>
+          <h3>Always dress for the weather</h3>
           {weather ? (
             <div className="weather-widget">
-              {weather.forecast.map((item, index) => (
-                <div className="weather-day" key={index}>
-                  <div className="day">{getDayName(item.dt_txt)}</div>
-                  <img
-                    src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                    alt={item.weather[0].description}
-                  />
-                  <div className="temp">{Math.round(item.main.temp - 273.15)}°C</div>
-                </div>
-              ))}
+              {weather.forecast.map((item, index) => {
+                // Adaugă clasa 'today' pentru ziua curentă
+                const isToday = new Date(item.dt_txt).toDateString() === new Date().toDateString();
+                return (
+                  <div className={`weather-day${isToday ? ' today' : ''}`} key={index}>
+                    <div className="day">{getDayName(item.dt_txt)}</div>
+                    <img
+                      src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                      alt={item.weather[0].description}
+                    />
+                    <div className="temp">{Math.round(item.main.temp - 273.15)}°C</div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <p>Loading weather...</p>
@@ -195,16 +269,40 @@ const Dashboard = () => {
 
         {/* Fashion Articles Section */}
         <section className="fashion-articles mt-5">
-          <h3>New in Fashion</h3>
+          <h3>The latest fashion articles to get you inspired</h3>
           <div className="articles-grid">
             {articles.map((article, index) => (
-              <div className="article-card" key={index}>
-                <img src={article.image} alt={article.title} />
-                <div className="article-info">
-                  <a href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
-                  <p className="article-desc">{article.description}</p>
-                </div>
-              </div>
+              <a
+                className="article-card"
+                key={index}
+                href={article.url || article.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                {(
+                  (article.image && article.image !== 'null') || (article.urlToImage && article.urlToImage !== 'null')
+                ) ? (
+                  <img
+                    src={article.image || article.urlToImage}
+                    alt={article.title}
+                    className="article-image"
+                  />
+                ) : (
+                  <img
+                    src="/default-fashion.jpg"
+                    alt="Fashion placeholder"
+                    className="article-image"
+                  />
+                )}
+                <h4>{article.title}</h4>
+                <p>{article.description}</p>
+                {article.source && (
+                  <span className="news-source">
+                    {typeof article.source === 'object' && article.source !== null ? article.source.name : article.source}
+                  </span>
+                )}
+              </a>
             ))}
           </div>
         </section>
