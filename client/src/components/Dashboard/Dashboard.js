@@ -291,39 +291,37 @@ const Dashboard = () => {
         <section className="fashion-articles mt-5">
           <h3>The latest fashion articles to get you inspired</h3>
           <div className="articles-grid">
-            {articles.map((article, index) => (
-              <a
-                className="article-card"
-                key={index}
-                href={article.url || article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                {(
-                  (article.image && article.image !== 'null') || (article.urlToImage && article.urlToImage !== 'null')
-                ) ? (
+            {articles.map((article, index) => {
+              const isInvalidImg = (src) =>
+                !src || src === 'null' || src.trim() === '' || src.includes('via.placeholder.com');
+              const imgSrc =
+                (!isInvalidImg(article.image)) ? article.image :
+                (!isInvalidImg(article.urlToImage)) ? article.urlToImage :
+                article1;
+              return (
+                <a
+                  className="article-card"
+                  key={index}
+                  href={article.url || article.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
                   <img
-                    src={article.image || article.urlToImage}
+                    src={imgSrc}
                     alt={article.title}
                     className="article-image"
                   />
-                ) : (
-                  <img
-                    src="/default-fashion.jpg"
-                    alt="Fashion placeholder"
-                    className="article-image"
-                  />
-                )}
-                <h4>{article.title}</h4>
-                <p>{article.description}</p>
-                {article.source && (
-                  <span className="news-source">
-                    {typeof article.source === 'object' && article.source !== null ? article.source.name : article.source}
-                  </span>
-                )}
-              </a>
-            ))}
+                  <h4>{article.title}</h4>
+                  <p>{article.description}</p>
+                  {article.source && (
+                    <span className="news-source">
+                      {typeof article.source === 'object' && article.source !== null ? article.source.name : article.source}
+                    </span>
+                  )}
+                </a>
+              );
+            })}
           </div>
         </section>
       </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaTshirt, FaHome, FaUser, FaCog, FaShoppingBag, FaChevronLeft, FaRegCalendarAlt, FaSignOutAlt, FaRobot, FaFolderOpen } from 'react-icons/fa';
+import { FaTshirt, FaHome, FaUser, FaShoppingBag, FaChevronLeft, FaRegCalendarAlt, FaSignOutAlt, FaRobot, FaFolderOpen } from 'react-icons/fa';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -18,7 +18,7 @@ const Sidebar = () => {
     { path: '/outfits', icon: <FaFolderOpen />, label: 'My Outfits' },
     { path: '/calendar', icon: <FaRegCalendarAlt />, label: 'Calendar Planner' },
     { path: '/ai-assistant', icon: <FaRobot />, label: 'AI Assistant' },
-    { path: '/settings', icon: <FaCog />, label: 'Settings' },
+  //{ path: '/settings', icon: <FaCog />, label: 'Settings' },
   ];
 
   const handleLogout = () => {

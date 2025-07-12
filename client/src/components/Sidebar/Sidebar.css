@@ -198,4 +198,13 @@
   font-size: 20px;
   text-align: center;
   margin-top: 8px;
+}
+
+.sidebar .nav-link {
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+  font-size: 1.05rem;
+}
+.sidebar .nav-item {
+  margin-bottom: 0.5rem;
 } 
