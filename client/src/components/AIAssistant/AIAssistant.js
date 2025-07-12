@@ -280,14 +280,24 @@ const AIAssistant = () => {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <p><b>Explanation:</b> {response.explanation}</p>
-                                        <Button 
-                                            variant="success" 
-                                            onClick={() => setShowSaveModal(true)}
-                                            className="mt-3"
-                                        >
-                                            Save Outfit
-                                        </Button>
+                                        <p><b>Explanation:</b> {response.explanation.replace(/\(id: ?\d+\)/g, '').replace(/\s+/g, ' ').trim()}</p>
+                                        <div style={{ display: 'flex', gap: '12px', marginTop: '18px' }}>
+                                            <Button 
+                                                variant="success" 
+                                                onClick={() => setShowSaveModal(true)}
+                                            >
+                                                Save Outfit
+                                            </Button>
+                                            <Button 
+                                                variant="secondary" 
+                                                onClick={() => {
+                                                    setOutfitParams({ occasion: '', style: '', weather: '' });
+                                                    setResponse('');
+                                                }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </div>
                                     </div>
                                 )}
                                 
@@ -309,7 +319,11 @@ const AIAssistant = () => {
 
             <OutfitSaveModal
                 show={showSaveModal}
-                handleClose={() => setShowSaveModal(false)}
+                handleClose={() => {
+                    setShowSaveModal(false);
+                    setOutfitParams({ occasion: '', style: '', weather: '' });
+                    setResponse('');
+                }}
                 handleSave={handleSaveOutfit}
                 selectedItemsCount={response?.items?.length || 0}
             />
