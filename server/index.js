@@ -10,6 +10,7 @@ import clothingRouter from "./routers/clothing-router.js";
 import geminiRouter from "./routers/geminiRouter.js";
 import outfitRouter from "./routers/outfitRouter.js";
 import scheduledOutfitRouter from "./routers/scheduledoutfits-router.js";
+import fashionNewsRouter from './routers/fashion-news-router.js';
 
 console.log("User router loaded:", userRouter);
 
@@ -34,6 +35,7 @@ app.use("/api", profileRouter);
 app.use("/api", clothingRouter);
 app.use("/api/ai", geminiRouter);
 app.use("/api/outfits", outfitRouter);
+app.use('/api/fashion-news', fashionNewsRouter);
 
 app.get("/", (req, res) => {
   res.send("Serverul rulează!");

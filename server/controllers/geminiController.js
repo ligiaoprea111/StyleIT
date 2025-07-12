@@ -62,6 +62,25 @@ Provide practical tips and explain why your suggestions would work well, referen
             res.status(500).json({ error: 'Failed to generate style advice' });
         }
     }
+
+    // Filter fashion articles using Gemini
+    static async filterFashionArticles(req, res) {
+        try {
+            const { articles } = req.body;
+            
+            if (!articles || !Array.isArray(articles)) {
+                return res.status(400).json({ 
+                    error: 'Articles array is required' 
+                });
+            }
+
+            const filteredArticles = await GeminiService.filterFashionArticles(articles);
+            res.json({ articles: filteredArticles });
+        } catch (error) {
+            console.error('Error in filterFashionArticles controller:', error);
+            res.status(500).json({ error: 'Failed to filter fashion articles' });
+        }
+    }
 }
 
 export default GeminiController; 

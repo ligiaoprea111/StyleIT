@@ -52,7 +52,7 @@ export const savePreferences = async (req, res) => {
         id_user,
         ...dataToSave
       });
-      res.status(201).json(preferences);
+    res.status(201).json(preferences);
     }
   } catch (error) {
     console.error("Error saving preferences:", error);

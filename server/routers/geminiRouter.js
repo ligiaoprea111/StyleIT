@@ -13,4 +13,7 @@ router.post('/outfit-recommendation', GeminiController.generateOutfitRecommendat
 // Generate style advice
 router.post('/style-advice', GeminiController.generateStyleAdvice);
 
+// Filter fashion articles
+router.post('/filter-articles', GeminiController.filterFashionArticles);
+
 export default router; 
