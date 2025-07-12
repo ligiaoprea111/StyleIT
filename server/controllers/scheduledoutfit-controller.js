@@ -104,6 +104,24 @@ export const getScheduledOutfitByDate = async (req, res) => {
   }
 };
 
+// Endpoint nou: toate datele cu outfit programat pentru un user
+export const getAllScheduledDatesForUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const scheduled = await ScheduledOutfit.findAll({
+      where: { id_user: userId },
+      attributes: ['scheduled_date'],
+    });
+    // Returnează doar array de stringuri cu datele
+    const dates = scheduled.map(entry => entry.scheduled_date);
+    console.log(`Scheduled dates for user ${userId}:`, dates);
+    res.json(dates); // Răspunde mereu cu 200 și array (chiar dacă e gol)
+  } catch (error) {
+    console.error('Error fetching scheduled dates:', error);
+    res.status(200).json([]); // În caz de eroare, răspunde cu array gol
+  }
+};
+
 // Removed Controller function to get all dates with scheduled or saved outfits for a user
 // export const getDatesWithOutfits = async (req, res) => {
 //   try {
