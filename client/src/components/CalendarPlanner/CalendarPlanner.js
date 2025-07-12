@@ -4,8 +4,9 @@ import Layout from '../Layout/Layout';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { BsCalendarCheckFill } from 'react-icons/bs';
 
 const CalendarPlanner = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -17,6 +18,19 @@ const CalendarPlanner = () => {
   const [showOutfitSelectModal, setShowOutfitSelectModal] = useState(false);
   const [schedulingLoading, setSchedulingLoading] = useState(false);
   const [schedulingError, setSchedulingError] = useState(null);
+
+  const [scheduledDates, setScheduledDates] = useState([]);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Reîncărcare automată dacă venim cu state.refresh
+  useEffect(() => {
+    if (location.state && location.state.refresh) {
+      // Reîncarcă datele calendarului o singură dată
+      navigate('/calendar', { replace: true });
+    }
+  }, [location.state, navigate]);
 
   useEffect(() => {
     const fetchUserOutfits = async () => {
@@ -98,6 +112,21 @@ const CalendarPlanner = () => {
     fetchScheduledOutfit();
   }, [selectedDate]);
 
+  // Încarcă datele cu outfit programat la montare
+  useEffect(() => {
+    const fetchScheduledDates = async () => {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+      try {
+        const res = await axios.get(`/api/scheduled-outfits/dates/${userId}`);
+        setScheduledDates(res.data.map(date => date.split('T')[0]));
+      } catch (err) {
+        setScheduledDates([]);
+      }
+    };
+    fetchScheduledDates();
+  }, []);
+
   const handleDayClick = (date) => {
     setSelectedDate(date);
   };
@@ -159,58 +188,80 @@ const CalendarPlanner = () => {
         <h2 className="calendar-planner-title">Calendar Planner</h2>
         <p className="calendar-planner-desc">Click a day to see your scheduled outfit or schedule one!</p>
         
-        <div className="calendar-wrapper">
-          <Calendar
-            onClickDay={handleDayClick}
-            value={selectedDate}
-          />
-        </div>
-
-        {selectedDate && (
-            <div className="scheduled-outfit-section mt-4">
+        <div className={`calendar-split-wrapper${selectedDate ? ' split-view' : ''}`}>
+          <div className="calendar-wrapper">
+            <Calendar
+              onClickDay={handleDayClick}
+              value={selectedDate}
+              tileContent={({ date, view }) => {
+                if (view === 'month') {
+                  // Normalizează la 'YYYY-MM-DD' în local time
+                  const dateStr = date.toLocaleDateString('en-CA');
+                  if (scheduledDates.includes(dateStr)) {
+                    return <BsCalendarCheckFill className="calendar-outfit-icon" title="Outfit scheduled" style={{ color: '#2fbad1', fontSize: '1em', marginLeft: 2, marginTop: 2 }} />;
+                  }
+                }
+                return null;
+              }}
+            />
+          </div>
+          {selectedDate && (
+            <div className="calendar-details-card">
+              <div className="scheduled-outfit-section mt-4">
                 <h4>Outfit for {selectedDate.toLocaleDateString()}</h4>
-
                 {loadingScheduledOutfit && <p>Loading outfit...</p>}
                 {scheduledOutfitError && <Alert variant="danger">{scheduledOutfitError}</Alert>}
-
                 {!loadingScheduledOutfit && !scheduledOutfitError && (
-                    scheduledOutfit ? (
-                        <div>
-                            <p><strong>Outfit:</strong> {scheduledOutfit.name || `Outfit ${scheduledOutfit.id}`}</p>
-                            {scheduledOutfit.image_url && (
-                                <img src={scheduledOutfit.image_url} alt={scheduledOutfit.name || 'Scheduled Outfit'} style={{ maxWidth: '200px', height: 'auto' }} />
-                            )}
-                            {scheduledOutfit.ClothingItems && scheduledOutfit.ClothingItems.length > 0 && (
-                                <div className="mt-3">
-                                    <h6>Items:</h6>
-                                    <div className="d-flex flex-wrap">
-                                        {scheduledOutfit.ClothingItems.map(item => (
-                                            <div key={item.id} className="me-2 mb-2 outfit-item-display">
-                                                {item.imageUrl && (
-                                                    <img src={item.imageUrl} alt={item.name || 'Item'} style={{ width: '70px', height: '70px', objectFit: 'cover' }} />
-                                                )}
-                                                <p className="text-center" style={{ fontSize: '0.8em' }}>{item.name || 'Item'}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                  scheduledOutfit ? (
+                    <div>
+                      <p><strong>Outfit:</strong> {scheduledOutfit.name || `Outfit ${scheduledOutfit.id}`}</p>
+                      {scheduledOutfit.image_url && (
+                        <img src={scheduledOutfit.image_url} alt={scheduledOutfit.name || 'Scheduled Outfit'} style={{ maxWidth: '200px', height: 'auto', borderRadius: '12px', marginBottom: '12px' }} />
+                      )}
+                      {scheduledOutfit.ClothingItems && scheduledOutfit.ClothingItems.length > 0 && (
+                        <div className="mt-3">
+                          <h6>Items:</h6>
+                          <div className="d-flex flex-wrap">
+                            {scheduledOutfit.ClothingItems.map(item => (
+                              <div key={item.id} className="me-2 mb-2 outfit-item-display">
+                                {item.imageUrl && (
+                                  <img src={item.imageUrl} alt={item.name || 'Item'} style={{ width: '70px', height: '70px', objectFit: 'cover', borderRadius: '8px' }} />
+                                )}
+                                <p className="text-center" style={{ fontSize: '0.8em' }}>{item.name || 'Item'}</p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                    ) : (
-                        <div>
-                            <p>No outfit set for this day.</p>
-                            <div>
-                                <Link to="/create-outfit" className="btn btn-primary me-2">Create New Outfit for this Date</Link>
-                                <Button variant="secondary" onClick={handleShowOutfitSelectModal} disabled={userOutfits.length === 0 || !userOutfits}>
-                                    {userOutfits && userOutfits.length === 0 ? 'No Outfits Available' : 'Select Existing Outfit'}
-                                </Button>
-                                {!userOutfits && <p className="text-danger">Could not load outfits for selection.</p>}
-                            </div>
-                        </div>
-                    )
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <p>No outfit set for this day.</p>
+                      <div className="calendar-details-actions">
+                        <Button
+                          className="btn btn-primary me-2"
+                          onClick={() => {
+                            const year = selectedDate.getFullYear();
+                            const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+                            const day = selectedDate.getDate().toString().padStart(2, '0');
+                            const formattedDate = `${year}-${month}-${day}`;
+                            navigate(`/wardrobe?date=${formattedDate}`);
+                          }}
+                        >
+                          Create New Outfit for this Date
+                        </Button>
+                        <Button variant="secondary" onClick={handleShowOutfitSelectModal} disabled={userOutfits.length === 0 || !userOutfits}>
+                          {userOutfits && userOutfits.length === 0 ? 'No Outfits Available' : 'Select Existing Outfit'}
+                        </Button>
+                        {!userOutfits && <p className="text-danger">Could not load outfits for selection.</p>}
+                      </div>
+                    </div>
+                  )
                 )}
+              </div>
             </div>
-        )}
+          )}
+        </div>
 
         <Modal show={showOutfitSelectModal} onHide={handleCloseOutfitSelectModal} size="lg" centered>
             <Modal.Header closeButton>

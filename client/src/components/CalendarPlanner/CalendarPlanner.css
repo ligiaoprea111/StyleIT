@@ -1,11 +1,13 @@
+/* --- Layout container --- */
 .calendar-planner-container {
-  padding: 2rem;
+  padding: 1.2rem 0.5rem;
   background: #fff;
-  min-height: 100vh;
-  display: flex; /* Use flexbox for centering */
-  flex-direction: column; /* Stack children vertically */
-  align-items: center; /* Center items horizontally */
-  width: 100%; /* Ensure container takes full width */
+  /* Elimin min-height: 100vh pentru a preveni scrollul inutil */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .calendar-planner-title {
@@ -23,18 +25,96 @@
   text-align: center; /* Center description */
 }
 
-.calendar-wrapper {
-  width: 100%; /* Allow wrapper to take full width */
-  max-width: 800px; /* Match max-width of calendar */
-  margin: 0 auto 2rem auto; /* Center horizontally and add space below */
-  display: flex; /* Use flexbox */
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically if needed */
+/* --- Split view flex --- */
+.calendar-split-wrapper,
+.calendar-split-wrapper.split-view {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  gap: 36px;
+  width: 100%;
+  max-width: 900px; /* mai mic pentru a nu ocupa prea mult */
+  min-height: 340px; /* mai mic pentru a preveni scrollul */
+  margin: 0 auto 1.2rem auto;
+  box-sizing: border-box;
+  transition: all 0.3s;
 }
 
-/* Styles to make the react-calendar larger and look like Bootstrap card */
+/* --- Card styles --- */
+.calendar-wrapper,
+.calendar-details-card {
+  flex: 1 1 0;
+  min-width: 300px;
+  max-width: 420px;
+  min-height: 320px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background: #e6fafd; /* fundal bleu pentru ambele */
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(51,4,74,0.10);
+  padding: 22px 18px 16px 18px;
+}
+
+.calendar-details-card {
+  border: 2px solid #a259ff22;
+  font-size: 1.08em;
+  margin: 0;
+  animation: fadeInRight 0.4s;
+  color: #33044a;
+}
+
+.calendar-details-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* --- Responsive: stacked on mobile --- */
+@media (max-width: 900px) {
+  .calendar-split-wrapper,
+  .calendar-split-wrapper.split-view {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    min-height: unset;
+    max-width: 98vw;
+  }
+  .calendar-wrapper,
+  .calendar-details-card {
+    min-width: 0;
+    max-width: 98vw;
+    width: 100%;
+    padding: 14px 6px 10px 6px;
+    min-height: unset;
+  }
+}
+
+@media (max-width: 700px) {
+  .calendar-wrapper {
+    max-width: 98vw;
+    min-width: 0;
+    padding: 6px;
+  }
+  .react-calendar__tile {
+    min-height: 38px;
+    font-size: 1em;
+  }
+}
+
+/* --- Restul stilurilor existente pentru calendar, butoane, etc. rămân neschimbate --- */
 .react-calendar {
-  width: 100%; /* Make it take full width of its container */
+  width: 100% !important;
+  font-size: 1.15em;
   border: 1px solid #dee2e6; /* Bootstrap border color */
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Bootstrap font stack */
   line-height: 1.5; /* Bootstrap line height */
@@ -95,6 +175,9 @@
   background: none;
   border-radius: .25rem; /* Rounded corners */
   transition: all 0.2s ease;
+  position: relative;
+  min-height: 54px;
+  font-size: 1.1em;
 }
 
 .react-calendar__tile:disabled {
@@ -147,6 +230,22 @@
 .react-calendar__tile--rangeExtraStart,
 .react-calendar__tile--rangeExtraEnd {
   opacity: 1; /* Keep full opacity for range ends */
+}
+
+.calendar-outfit-icon {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  top: auto;
+  left: auto;
+  font-size: 1em;
+  color: #2fbad1;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(47,186,209,0.10);
+  z-index: 2;
+  padding: 2px;
+  pointer-events: none;
 }
 
 /* Basic styling for scheduled events section */

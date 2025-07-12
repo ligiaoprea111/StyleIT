@@ -101,9 +101,20 @@ router.put('/:id', async (req, res) => {
         }
 
         // Update outfit details (name, date)
+        const oldDate = outfit.date;
         outfit.name = name || outfit.name; // Update name if provided
         outfit.date = date !== undefined ? (date || null) : outfit.date; // Update date if provided (allow null)
         await outfit.save();
+
+        // Dacă data s-a schimbat, șterge programarea veche
+        if (date !== undefined && oldDate && date !== oldDate) {
+            await db.ScheduledOutfit.destroy({
+                where: {
+                    id_outfit: outfit.id,
+                    scheduled_date: oldDate
+                }
+            });
+        }
 
         // Update associated clothing items if itemIds are provided
         if (itemIds !== undefined && Array.isArray(itemIds)) {

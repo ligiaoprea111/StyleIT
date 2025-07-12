@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Nav, Row, Col, Card, Alert, Button } from "react-bootstrap";
-import { FaTshirt, FaPlus } from "react-icons/fa";
+import { FaTshirt, FaPlus, FaCheckCircle } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Wardrobe.css"; // Uncomment if you want to add custom styles
 import ImageModal from '../ImageModal/ImageModal';
@@ -62,6 +62,7 @@ const Wardrobe = () => {
     const token = localStorage.getItem('token');
     const queryParams = new URLSearchParams(location.search);
     const outfitId = queryParams.get('editOutfitId');
+    const preselectedDate = queryParams.get('date');
 
     const fetchWardrobeData = async () => {
       if (!userId || !token) {
@@ -95,6 +96,10 @@ const Wardrobe = () => {
              console.error('Error fetching outfit for editing:', outfitErr);
              // TODO: Handle error fetching specific outfit (e.g., show error message)
           }
+        } else if (preselectedDate) {
+          // Dacă există ?date=..., activează direct selecția și prepopulează data
+          setIsSelectingForOutfit(true);
+          setInitialOutfitDate(preselectedDate);
         }
 
         setLoading(false);
@@ -177,6 +182,7 @@ const Wardrobe = () => {
 
     try {
         let response;
+        let newOutfitId = null;
         if (editingOutfitId) {
             // Perform PUT request if editing an existing outfit
             response = await axios.put(`/api/outfits/${editingOutfitId}`, {
@@ -186,8 +192,8 @@ const Wardrobe = () => {
             }, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-             console.log('Outfit updated successfully:', response.data);
-
+            console.log('Outfit updated successfully:', response.data);
+            newOutfitId = editingOutfitId;
         } else {
             // Perform POST request if creating a new outfit
             response = await axios.post('/api/outfits', {
@@ -198,6 +204,23 @@ const Wardrobe = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             console.log('Outfit saved successfully:', response.data);
+            newOutfitId = response.data.id;
+        }
+
+        // Dacă există o dată, programează outfit-ul pentru acea zi
+        if (outfitDate && newOutfitId) {
+          try {
+            await axios.post('/api/scheduled-outfits', {
+              id_user: userId,
+              id_outfit: newOutfitId,
+              scheduled_date: outfitDate
+            }, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            console.log('Outfit scheduled for date:', outfitDate);
+          } catch (scheduleErr) {
+            console.error('Error scheduling outfit:', scheduleErr);
+          }
         }
 
         // Reset selection mode and clear selected items on successful save/update
@@ -208,7 +231,12 @@ const Wardrobe = () => {
         // Removed: setSaveOutfitError(null);
 
         // Redirect to My Outfits page
-        navigate('/outfits');
+        if (outfitDate) {
+          // Dacă a fost programat pe o zi, mergi la calendar și forțează refresh
+          navigate('/calendar', { state: { refresh: true } });
+        } else {
+          navigate('/outfits');
+        }
 
         // TODO: Optionally, show a success message to the user
 
@@ -330,11 +358,14 @@ const Wardrobe = () => {
                     <Col key={item.id}>
                       {/* Modify Card based on selection mode */}
                       <Card
-                        className={isSelectingForOutfit && selectedOutfitItems.some(selectedItem => selectedItem.id === item.id) ? 'wardrobe-item-selected' : ''}
+                        className={`wardrobe-card-item${isSelectingForOutfit && selectedOutfitItems.some(selectedItem => selectedItem.id === item.id) ? ' wardrobe-item-selected' : ''}`}
                         onClick={isSelectingForOutfit ? () => handleSelectItemForOutfit(item) : () => handleImageClick(item.imageUrl)}
-                        style={{ cursor: isSelectingForOutfit ? 'pointer' : 'pointer' }}
+                        style={{ cursor: 'pointer', position: 'relative' }}
                       >
                         <Card.Img variant="top" src={item.imageUrl} alt={item.name} />
+                        {isSelectingForOutfit && selectedOutfitItems.some(selectedItem => selectedItem.id === item.id) && (
+                          <FaCheckCircle className="wardrobe-selected-check" title="Selected" />
+                        )}
                         <Card.Body>
                           <Card.Title>{item.name}</Card.Title>
                           <Card.Text>
@@ -358,7 +389,7 @@ const Wardrobe = () => {
         handleSave={handleSaveOutfit}
         selectedItemsCount={selectedOutfitItems.length}
         initialName={editingOutfitId ? initialOutfitName : ''}
-        initialDate={editingOutfitId ? initialOutfitDate : ''}
+        initialDate={initialOutfitDate}
       />
 
       {selectedImage && (

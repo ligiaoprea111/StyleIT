@@ -9,12 +9,14 @@ import article3 from '../../assets/images/article3.jpg';
 import article4 from '../../assets/images/article4.jpg';
 import article5 from '../../assets/images/article5.jpg';
 import { FaUserCircle, FaTshirt, FaShoppingBag, FaUser, FaPalette } from 'react-icons/fa';
+import { BsCalendarCheckFill } from 'react-icons/bs';
 
 const Dashboard = () => {
   const [weather, setWeather] = useState(null);
   const [articles, setArticles] = useState([]);
   const userId = localStorage.getItem('userId');
   const [userName, setUserName] = useState('');
+  const [scheduledDates, setScheduledDates] = useState([]);
 
   // Helper pentru ziua săptămânii
   const getDayName = (dateStr) => {
@@ -188,6 +190,20 @@ const Dashboard = () => {
     fetchUserName();
   }, [userId]);
 
+  // Fetch scheduled outfit dates
+  useEffect(() => {
+    if (!userId) return;
+    const fetchScheduledDates = async () => {
+      try {
+        const res = await axios.get(`/api/scheduled-outfits/dates/${userId}`);
+        setScheduledDates(res.data.map(date => date.split('T')[0])); // Normalize date format
+      } catch (err) {
+        setScheduledDates([]);
+      }
+    };
+    fetchScheduledDates();
+  }, [userId]);
+
   return (
     <Layout>
       <div className="dashboard-container" style={{position:'relative'}}>
@@ -248,11 +264,15 @@ const Dashboard = () => {
           {weather ? (
             <div className="weather-widget">
               {weather.forecast.map((item, index) => {
-                // Adaugă clasa 'today' pentru ziua curentă
                 const isToday = new Date(item.dt_txt).toDateString() === new Date().toDateString();
+                const dateStr = item.dt_txt.split('T')[0] || item.dt_txt.split(' ')[0];
+                const hasOutfit = scheduledDates.includes(dateStr);
                 return (
-                  <div className={`weather-day${isToday ? ' today' : ''}`} key={index}>
-                    <div className="day">{getDayName(item.dt_txt)}</div>
+                  <div className={`weather-day${isToday ? ' today' : ''}${hasOutfit ? ' has-outfit' : ''}`} key={index}>
+                    <div className="day" style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'4px'}}>
+                      {getDayName(item.dt_txt)}
+                      {hasOutfit && <BsCalendarCheckFill className="outfit-icon" title="Outfit scheduled" style={{color:'#2fbad1',marginLeft:4,fontSize:18}} />}
+                    </div>
                     <img
                       src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
                       alt={item.weather[0].description}

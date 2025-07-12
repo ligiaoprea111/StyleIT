@@ -757,3 +757,16 @@ button.header-link:hover::after {
   box-shadow: 0 2px 8px rgba(162,89,255,0.08);
   color: #5e2b97;
 }
+.weather-day.has-outfit {
+  background: #e6fafd;
+  border: 2px solid #2fbad1;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(47,186,209,0.08);
+}
+.outfit-icon {
+  vertical-align: middle;
+  margin-left: 2px;
+  font-size: 18px;
+  color: #2fbad1;
+  filter: drop-shadow(0 1px 2px #b2eaf2);
+}
